@@ -1,2 +1,23 @@
+# Codex
 .codex/*
 !.codex/prompts/
+
+# Xcode
+
+## User settings
+xcuserdata/
+*.xcuserdatad/
+
+## Obj-C/Swift specific
+*.hmap
+
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
