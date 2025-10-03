@@ -47,7 +47,11 @@
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] **SwiftUI Experience Integrity** → Plan documents how each new surface uses SwiftUI, shared design tokens, accessibility coverage (Dynamic Type, VoiceOver, contrast), and enforces MVVM boundaries (views render only; view models own logic).
+- [ ] **Calm State & Offline Resilience** → State diagrams cover loading/empty/error flows and identify local persistence plus offline fallbacks.
+- [ ] **Observability With Privacy Guarantees** → Metrics, logs, and traces are defined up front with explicit data sanitization commitments.
+- [ ] **Test-First Delivery** → Failing tests (unit, integration, snapshot) are enumerated before implementation tasks; CI impact is addressed.
+- [ ] **Release Confidence & Support** → Release toggles, rollback, and support expectations are captured alongside pipeline updates.
 
 ## Project Structure
 
@@ -216,4 +220,4 @@ directories captured above]
 - [ ] Complexity deviations documented
 
 ---
-*Based on Constitution v2.1.1 - See `/memory/constitution.md`*
+*Based on Constitution v1.1.0 - See `/memory/constitution.md`*
