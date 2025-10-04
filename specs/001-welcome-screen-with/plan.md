@@ -36,7 +36,7 @@ Create a SwiftUI welcome surface that introduces Chill, displays marketing copy 
 **Language/Version**: Swift 6 toolchain (Xcode 16)  
 **Primary Dependencies**: SwiftUI, Chill design tokens (Assets.xcassets, shared spacing/typography helpers)  
 **Storage**: N/A (stateless presentation)  
-**Testing**: XCTest with SwiftUI snapshot tests (e.g., Xcode Preview snapshot harness)  
+**Testing**: XCTest with SwiftUI snapshot tests and view-model units (UI automation deferred until authentication is wired)  
 **Target Platform**: iOS 18.0+ (matches `IPHONEOS_DEPLOYMENT_TARGET` 26.0)  
 **Project Type**: mobile (single iOS app target)  
 **Performance Goals**: Maintain 60 fps during animations; initial render under 200 ms on A16-class devices  
@@ -110,7 +110,7 @@ ChillUITests/
 ## Phase 2: Task Planning Approach
 - Derive tasks from contract scenarios (render default state, large type layout, reduced motion behavior).
 - Create unit tests for `WelcomeViewModel` states before wiring view.
-- Author snapshot/UI tests validating enabled-but-inactive buttons.
+- Author snapshot tests validating enabled-but-inactive buttons; defer UI automation until Supabase authentication is implemented.
 - Sequence: establish design tokens updates → implement view model → build view hierarchy → wire ContentView entry → add previews/tests → polish accessibility copy → update release toggle + documentation.
 - Mark parallelizable tasks (`[P]`) for asset preparation and localization scaffolding.
 

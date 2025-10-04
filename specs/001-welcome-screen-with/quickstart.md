@@ -20,14 +20,9 @@
      -scheme Chill \
      -destination 'platform=iOS Simulator,name=iPhone 16'
    ```
-6. **Run UI tests (argument included in test harness)**
-   ```bash
-   xcodebuild test \
-     -project /Users/jin/Code/Chill/Chill.xcodeproj \
-     -scheme ChillUITests \
-     -destination 'platform=iOS Simulator,name=iPhone 16'
-   ```
-7. **Manual accessibility smoke test**
+6. **Manual accessibility smoke test**
    - Launch simulator, enable VoiceOver, ensure buttons announce "coming soon" status and do not navigate.
-8. **Review analytics backlog item**
+7. **Review analytics backlog item**
    - Confirm no new logging is introduced; create ticket to enable telemetry when authentication ships.
+8. **Plan UI end-to-end coverage later**
+   - UI automation for the welcome flow is deferred until Supabase authentication is implemented; reintroduce UITests when the full flow is ready.

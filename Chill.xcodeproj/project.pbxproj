@@ -14,20 +14,11 @@
 			remoteGlobalIDString = 3CDEE87B2E907DD1006DB079;
 			remoteInfo = Chill;
 		};
-		3CDEE8942E907DD3006DB079 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CDEE8742E907DD1006DB079 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3CDEE87B2E907DD1006DB079;
-			remoteInfo = Chill;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		3CDEE87C2E907DD1006DB079 /* Chill.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chill.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CDEE8892E907DD3006DB079 /* ChillTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChillTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3CDEE8932E907DD3006DB079 /* ChillUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChillUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-/* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		3CDEE87E2E907DD1006DB079 /* Chill */ = {
@@ -38,11 +29,6 @@
 		3CDEE88C2E907DD3006DB079 /* ChillTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ChillTests;
-			sourceTree = "<group>";
-		};
-		3CDEE8962E907DD3006DB079 /* ChillUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ChillUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -62,13 +48,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3CDEE8902E907DD3006DB079 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -77,7 +56,6 @@
 			children = (
 				3CDEE87E2E907DD1006DB079 /* Chill */,
 				3CDEE88C2E907DD3006DB079 /* ChillTests */,
-				3CDEE8962E907DD3006DB079 /* ChillUITests */,
 				3CDEE87D2E907DD1006DB079 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -87,7 +65,6 @@
 			children = (
 				3CDEE87C2E907DD1006DB079 /* Chill.app */,
 				3CDEE8892E907DD3006DB079 /* ChillTests.xctest */,
-				3CDEE8932E907DD3006DB079 /* ChillUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -140,29 +117,6 @@
 			productReference = 3CDEE8892E907DD3006DB079 /* ChillTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		3CDEE8922E907DD3006DB079 /* ChillUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3CDEE8A32E907DD3006DB079 /* Build configuration list for PBXNativeTarget "ChillUITests" */;
-			buildPhases = (
-				3CDEE88F2E907DD3006DB079 /* Sources */,
-				3CDEE8902E907DD3006DB079 /* Frameworks */,
-				3CDEE8912E907DD3006DB079 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				3CDEE8952E907DD3006DB079 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				3CDEE8962E907DD3006DB079 /* ChillUITests */,
-			);
-			name = ChillUITests;
-			packageProductDependencies = (
-			);
-			productName = ChillUITests;
-			productReference = 3CDEE8932E907DD3006DB079 /* ChillUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -177,10 +131,6 @@
 						CreatedOnToolsVersion = 26.0;
 					};
 					3CDEE8882E907DD3006DB079 = {
-						CreatedOnToolsVersion = 26.0;
-						TestTargetID = 3CDEE87B2E907DD1006DB079;
-					};
-					3CDEE8922E907DD3006DB079 = {
 						CreatedOnToolsVersion = 26.0;
 						TestTargetID = 3CDEE87B2E907DD1006DB079;
 					};
@@ -202,7 +152,6 @@
 			targets = (
 				3CDEE87B2E907DD1006DB079 /* Chill */,
 				3CDEE8882E907DD3006DB079 /* ChillTests */,
-				3CDEE8922E907DD3006DB079 /* ChillUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -216,13 +165,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		3CDEE8872E907DD3006DB079 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3CDEE8912E907DD3006DB079 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -246,13 +188,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3CDEE88F2E907DD3006DB079 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -260,11 +195,6 @@
 			isa = PBXTargetDependency;
 			target = 3CDEE87B2E907DD1006DB079 /* Chill */;
 			targetProxy = 3CDEE88A2E907DD3006DB079 /* PBXContainerItemProxy */;
-		};
-		3CDEE8952E907DD3006DB079 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3CDEE87B2E907DD1006DB079 /* Chill */;
-			targetProxy = 3CDEE8942E907DD3006DB079 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -494,44 +424,6 @@
 			};
 			name = Release;
 		};
-		3CDEE8A42E907DD3006DB079 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bitcrank.ChillUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Chill;
-			};
-			name = Debug;
-		};
-		3CDEE8A52E907DD3006DB079 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bitcrank.ChillUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Chill;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -558,15 +450,6 @@
 			buildConfigurations = (
 				3CDEE8A12E907DD3006DB079 /* Debug */,
 				3CDEE8A22E907DD3006DB079 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3CDEE8A32E907DD3006DB079 /* Build configuration list for PBXNativeTarget "ChillUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3CDEE8A42E907DD3006DB079 /* Debug */,
-				3CDEE8A52E907DD3006DB079 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

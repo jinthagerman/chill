@@ -18,7 +18,7 @@
 ## Pre-Release Checklist
 - [ ] Capture updated simulator screenshots (light and dark mode) showing coming-soon helper text.
 - [ ] VoiceOver announces "Authentication coming soon" for both CTAs.
-- [ ] Snapshot, unit, and UI tests pass on CI.
+- [ ] Snapshot and unit tests pass on CI (UI automation deferred until authentication flow ships).
 - [ ] Analytics instrumentation ticket scheduled for authentication milestone.
 - [ ] Release notes communicate that login/signup will activate in a future update.
 
