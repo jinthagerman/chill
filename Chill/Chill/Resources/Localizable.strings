@@ -3,3 +3,14 @@
 "welcome_button_login" = "Log In";
 "welcome_button_signup" = "Sign Up";
 "welcome_cta_accessibility_hint" = "Authentication coming soon. Buttons are currently inactive.";
+
+/* Video List */
+"video_list_title" = "My Videos";
+"video_list_loading" = "Loading your videos...";
+"video_list_empty" = "No videos yet. Add your first video to get started.";
+"video_list_error" = "Couldn't load videos. Check your connection and try again.";
+"video_list_offline_banner" = "Showing cached videos. Connect to see updates.";
+"video_list_reconnect_toast" = "Back online";
+"video_list_retry_button" = "Try Again";
+"video_list_add_button" = "Add Video";
+"video_list_connection_lost" = "Connection lost. Showing cached videos.";

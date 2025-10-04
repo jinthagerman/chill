@@ -1,0 +1,54 @@
+# GraphQL query contract for My Videos card list
+
+query VideoCards($limit: Int = 50, $cursor: timestamptz) {
+  video_cards_view(
+    order_by: {updated_at: desc}
+    limit: $limit
+    where: {
+      updated_at: {_lt: $cursor}
+    }
+  ) {
+    id
+    title
+    creator_name
+    platform_name
+    duration_seconds
+    thumbnail_url
+    updated_at
+  }
+}
+
+subscription VideoCardsStream($since: timestamptz) {
+  video_cards_view_stream(
+    batch_size: 25
+    cursor: [{initial_value: {updated_at: $since}, ordering: DESC}]
+  ) {
+    eventType
+    payload {
+      id
+      title
+      creator_name
+      platform_name
+      duration_seconds
+      thumbnail_url
+      updated_at
+    }
+  }
+}
+
+# Expected 200 response (simplified)
+# {
+#   "data": {
+#     "video_cards_view": [
+#       {
+#         "id": "uuid",
+#         "title": "The Future of AI",
+#         "creator_name": "TechTalks",
+#         "platform_name": "YouTube",
+#         "duration_seconds": 765,
+#         "thumbnail_url": "https://cdn.example/thumb.jpg",
+#         "updated_at": "2025-10-03T19:24:00Z"
+#       }
+#     ]
+#   }
+# }

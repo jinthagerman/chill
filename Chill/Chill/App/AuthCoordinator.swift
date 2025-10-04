@@ -1,6 +1,8 @@
 import Foundation
 import Network
 import Combine
+import SwiftUI
+import SwiftData
 
 @MainActor
 final class AuthCoordinator: ObservableObject {
@@ -8,6 +10,7 @@ final class AuthCoordinator: ObservableObject {
         case welcome
         case auth
         case savedLinks
+        case videoList
     }
 
     enum BootstrapState {
@@ -34,7 +37,7 @@ final class AuthCoordinator: ObservableObject {
             authService = service
 
             let viewModel = AuthViewModel(service: service) { [weak self] in
-                self?.route = .savedLinks
+                self?.route = .videoList
             }
             authViewModel = viewModel
             reachabilityObserver = ReachabilityObserver { [weak viewModel] status in
@@ -42,7 +45,7 @@ final class AuthCoordinator: ObservableObject {
             }
 
             if service.currentSession != nil {
-                route = .savedLinks
+                route = .videoList
             } else {
                 route = .welcome
             }
@@ -70,6 +73,24 @@ final class AuthCoordinator: ObservableObject {
                 self?.presentAuth(mode: .signup(consentAccepted: false))
             }
         )
+    }
+    
+    func makeVideoListView(modelContext: ModelContext) -> VideoListView {
+        guard authService != nil else {
+            fatalError("AuthService not initialized")
+        }
+        
+        do {
+            let configuration = try AuthConfiguration.load()
+            let service = VideoCardsService.live(configuration: configuration)
+            let viewModel = VideoListViewModel(
+                service: service,
+                modelContext: modelContext
+            )
+            return VideoListView(viewModel: viewModel)
+        } catch {
+            fatalError("Failed to initialize VideoListView: \(error)")
+        }
     }
 
     func presentAuth(mode: AuthMode) {

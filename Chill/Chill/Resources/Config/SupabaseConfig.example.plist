@@ -3,8 +3,8 @@
 <plist version="1.0">
 <dict>
 	<key>SupabaseURL</key>
-	<string></string>
+	<string>http://127.0.0.1:54321</string>
 	<key>SupabaseAnonKey</key>
-	<string></string>
+	<string>sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz</string>
 </dict>
 </plist>
