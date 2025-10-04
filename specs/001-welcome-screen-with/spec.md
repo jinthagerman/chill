@@ -76,7 +76,7 @@ As an unauthenticated user opening Chill, I see a welcoming experience that expl
 - [x] Calm State & Offline Resilience: Offline flows, persistence guarantees, and error states are documented.
 - [x] Observability With Privacy Guarantees: Logging, metrics, and privacy constraints are defined (no instrumentation for this release).
 - [x] Test-First Delivery: Expected failing tests and coverage strategy are enumerated (UI snapshot/accessibility checks for inactive buttons).
-- [x] Release Confidence & Support: Rollout gating, toggles, and support handoffs are covered (UI-only release, no backend dependencies).
+- [x] Release Confidence & Support: Manual QA scope, analytics follow-up, and support handoffs documented (no feature flag gating required).
 
 ## Execution Status
 *Updated by main() during processing*

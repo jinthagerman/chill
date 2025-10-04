@@ -21,3 +21,11 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+## build directories
+.DerivedData/
+.tmp/
+.xcodehome/
+
+## supabase
+Chill/Chill/Resources/Config/SupabaseConfig.plist

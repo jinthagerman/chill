@@ -14,7 +14,7 @@ struct WelcomeView: View {
             backgroundView
 
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .center, spacing: Spacing.stackLarge) {
+                VStack(alignment: .center, spacing: Spacing.stackLarge * 2) {
                     header
                     ctaSection
                 }
@@ -58,7 +58,7 @@ struct WelcomeView: View {
             ForEach(viewModel.primaryButtons) { configuration in
                 Button(action: { viewModel.handleTap(for: configuration.role) }) {
                     Text(configuration.title)
-                        .font(.headline.weight(.semibold))
+                        .font(.headline.weight(.bold))
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, Spacing.stackSmall)

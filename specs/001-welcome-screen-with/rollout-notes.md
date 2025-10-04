@@ -1,19 +1,18 @@
 # Rollout Notes — Welcome Screen With Login and Signup
 
-## Toggle Overview
-- **Feature flag**: `WelcomeExperienceEnabled`
-- **Control**: Launch argument `--enable-welcome-experience` (local/testing) or configuration toggle in production build settings.
-- **Default state**: OFF (legacy home flow displays).
+## Launch Overview
+- **Configuration**: Welcome screen ships enabled by default for all unauthenticated users.
+- **Impact**: Replaces the placeholder home experience with a branded entry point highlighting future login/signup availability.
 
 ## Enable Procedure
-1. Add `--enable-welcome-experience` to the production scheme or remote configuration.
-2. Deploy build to internal testers; confirm VoiceOver, Dynamic Type, and reduced-motion interactions via manual QA checklist.
-3. Monitor support channels for confusion around inactive CTAs during the staged rollout.
+1. Merge the feature branch and build the release candidate.
+2. Deploy to internal testers; confirm VoiceOver, Dynamic Type, and reduced-motion interactions via manual QA checklist.
+3. Monitor support channels for first-week feedback on messaging clarity.
 
 ## Disable / Rollback Procedure
-1. Remove the launch argument or flip the remote toggle to `false`.
-2. Relaunch the app (no rebuild required); users return to the prior home flow.
-3. File incident summary if disabling in response to a customer issue.
+1. Prepare a hotfix build that restores the prior welcome placeholder or hides CTAs temporarily.
+2. Submit the hotfix through expedited review if needed.
+3. Document the incident and plan follow-up tasks before re-enabling the experience.
 
 ## Pre-Release Checklist
 - [ ] Capture updated simulator screenshots (light and dark mode) showing coming-soon helper text.

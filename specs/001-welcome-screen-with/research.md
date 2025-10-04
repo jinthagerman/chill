@@ -33,7 +33,7 @@
 
 ## Follow-up Items
 
-- Create analytics instrumentation ticket to enable welcome screen telemetry once authentication flows ship; confirm ownership before flipping feature flag.
+- Create analytics instrumentation ticket to enable welcome screen telemetry once authentication flows ship; confirm ownership before launch.
 
 
 ## Performance
