@@ -48,7 +48,7 @@ Create a SwiftUI welcome surface that introduces Chill, displays marketing copy 
 - [x] **Calm State & Offline Resilience** → State diagram limited to default/large type/reduced motion; no network calls; helper copy explains inactive CTAs.
 - [x] **Observability With Privacy Guarantees** → No analytics emitted; backlog ticket documented for future activation before logging is introduced.
 - [x] **Test-First Delivery** → Plan includes failing UI snapshot + view model unit tests written before implementation.
-- [x] **Release Confidence & Support** → Feature guarded behind `WelcomeExperienceEnabled` toggle with rollout notes and manual QA checklist.
+- [x] **Release Confidence & Support** → Release readiness captured via manual QA checklist and documentation; rollout can ship directly once validation passes (no feature flag).
 
 ## Project Structure
 
@@ -111,12 +111,12 @@ ChillUITests/
 - Derive tasks from contract scenarios (render default state, large type layout, reduced motion behavior).
 - Create unit tests for `WelcomeViewModel` states before wiring view.
 - Author snapshot tests validating enabled-but-inactive buttons; defer UI automation until Supabase authentication is implemented.
-- Sequence: establish design tokens updates → implement view model → build view hierarchy → wire ContentView entry → add previews/tests → polish accessibility copy → update release toggle + documentation.
+- Sequence: establish design tokens updates → implement view model → build view hierarchy → wire ContentView entry → add previews/tests → polish accessibility copy → finalize documentation.
 - Mark parallelizable tasks (`[P]`) for asset preparation and localization scaffolding.
 
 ## Phase 3+: Future Implementation
 - Phase 3 (`/tasks`): generate executable task list from this plan.
-- Phase 4: execute tasks with test-first discipline; ensure toggle default state documented.
+- Phase 4: execute tasks with test-first discipline; ensure documentation reflects launch copy and support guidance.
 - Phase 5: validate via Xcode tests, preview audit, and manual accessibility checklist before rollout.
 
 ## Complexity Tracking

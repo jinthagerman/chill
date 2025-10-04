@@ -1,9 +1,47 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var coordinator = AuthCoordinator()
+
     var body: some View {
-        Group {
-            WelcomeView()
+        switch coordinator.state {
+        case .loading:
+            ProgressView("Preparing Chill...")
+                .progressViewStyle(.circular)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        case .failure(let message):
+            VStack(spacing: 16) {
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.system(size: 48))
+                    .foregroundColor(.orange)
+                Text("Configuration Issue")
+                    .font(.title2.weight(.semibold))
+                Text(message)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(.systemGroupedBackground))
+        case .ready:
+            contentForRoute
+        }
+    }
+
+    @ViewBuilder
+    private var contentForRoute: some View {
+        switch coordinator.route {
+        case .welcome:
+            WelcomeView(viewModel: coordinator.makeWelcomeViewModel())
+        case .auth:
+            if let viewModel = coordinator.authViewModel {
+                AuthView(viewModel: viewModel)
+            } else {
+                EmptyView()
+            }
+        case .savedLinks:
+            SavedLinksView()
         }
     }
 }
