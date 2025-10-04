@@ -1,7 +1,9 @@
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     @StateObject private var coordinator = AuthCoordinator()
+    @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         switch coordinator.state {
@@ -42,6 +44,8 @@ struct ContentView: View {
             }
         case .savedLinks:
             SavedLinksView()
+        case .videoList:
+            coordinator.makeVideoListView(modelContext: modelContext)
         }
     }
 }

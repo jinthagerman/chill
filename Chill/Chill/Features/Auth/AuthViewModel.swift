@@ -24,7 +24,7 @@ final class AuthViewModel: ObservableObject {
         service: AuthServiceType,
         initialMode: AuthMode = .login,
         networkStatus: NetworkReachability = .wifi,
-        analytics: AuthAnalytics = .live(),
+        analytics: AuthAnalytics = AuthAnalytics.noop,
         onAuthenticated: @escaping () -> Void = {}
     ) {
         self.service = service
@@ -191,7 +191,7 @@ final class AuthViewModel: ObservableObject {
 
     func handleSessionChange(_ session: AuthSession?) async {
         self.session = session
-        guard let session else {
+        guard session != nil else {
             hasRoutedToSavedLinks = false
             return
         }

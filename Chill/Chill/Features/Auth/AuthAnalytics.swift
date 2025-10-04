@@ -1,10 +1,10 @@
 import Foundation
 import os
 
-struct AuthAnalytics {
-    private let handler: (AuthEventPayload) -> Void
+struct AuthAnalytics: Sendable {
+    private let handler: @Sendable (AuthEventPayload) -> Void
 
-    init(handler: @escaping (AuthEventPayload) -> Void) {
+    nonisolated init(handler: @escaping @Sendable (AuthEventPayload) -> Void) {
         self.handler = handler
     }
 
@@ -12,9 +12,9 @@ struct AuthAnalytics {
         handler(payload)
     }
 
-    static let noop = AuthAnalytics { _ in }
+    nonisolated static let noop = AuthAnalytics { _ in }
 
-    static func live(logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.bitcrank.Chill", category: "Auth")) -> AuthAnalytics {
+    nonisolated static func live(logger: Logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.bitcrank.Chill", category: "Auth")) -> AuthAnalytics {
         return AuthAnalytics { payload in
             logger.log(
                 "event=\(payload.eventType.rawValue, privacy: .public) result=\(payload.result.rawValue, privacy: .public) error=\(payload.supabaseErrorCode ?? "none", privacy: .public) latencyMs=\(payload.latencyMs, privacy: .public) network=\(payload.networkStatus.rawValue, privacy: .public) phase=\(payload.phase?.rawValue ?? "n/a", privacy: .public)"
