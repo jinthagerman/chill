@@ -5,7 +5,7 @@
 "welcome_cta_accessibility_hint" = "Authentication coming soon. Buttons are currently inactive.";
 
 /* Video List */
-"video_list_title" = "My Videos";
+"video_list_title" = "Vid-yos 📼";
 "video_list_loading" = "Loading your videos...";
 "video_list_empty" = "No videos yet. Add your first video to get started.";
 "video_list_error" = "Couldn't load videos. Check your connection and try again.";

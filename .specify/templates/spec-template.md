@@ -31,7 +31,6 @@
 - ✅ Focus on WHAT users need and WHY
 - ❌ Avoid HOW to implement (no tech stack, APIs, code structure)
 - 👥 Written for business stakeholders, not developers
-- ♿ Capture accessibility, offline resilience, observability, and release control expectations explicitly—missing details block downstream work.
 
 ### Section Requirements
 - **Mandatory sections**: Must be completed for every feature
@@ -100,13 +99,6 @@ When creating this spec from a user prompt:
 - [ ] Success criteria are measurable
 - [ ] Scope is clearly bounded
 - [ ] Dependencies and assumptions identified
-
-### Constitution Alignment
-- [ ] SwiftUI Experience Integrity: Accessibility, design-system expectations, and MVVM view/view-model boundaries are described.
-- [ ] Calm State & Offline Resilience: Offline flows, persistence guarantees, and error states are documented.
-- [ ] Observability With Privacy Guarantees: Logging, metrics, and privacy constraints are defined.
-- [ ] Test-First Delivery: Expected failing tests and coverage strategy are enumerated.
-- [ ] Release Confidence & Support: Rollout gating, toggles, and support handoffs are covered.
 
 ---
 

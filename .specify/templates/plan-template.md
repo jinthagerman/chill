@@ -47,11 +47,7 @@
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- [ ] **SwiftUI Experience Integrity** → Plan documents how each new surface uses SwiftUI, shared design tokens, accessibility coverage (Dynamic Type, VoiceOver, contrast), and enforces MVVM boundaries (views render only; view models own logic).
-- [ ] **Calm State & Offline Resilience** → State diagrams cover loading/empty/error flows and identify local persistence plus offline fallbacks.
-- [ ] **Observability With Privacy Guarantees** → Metrics, logs, and traces are defined up front with explicit data sanitization commitments.
-- [ ] **Test-First Delivery** → Failing tests (unit, integration, snapshot) are enumerated before implementation tasks; CI impact is addressed.
-- [ ] **Release Confidence & Support** → Release toggles, rollback, and support expectations are captured alongside pipeline updates.
+[Gates determined based on constitution file]
 
 ## Project Structure
 
@@ -156,7 +152,7 @@ directories captured above]
    - Quickstart test = story validation steps
 
 5. **Update agent file incrementally** (O(1) operation):
-   - Run `.specify/scripts/bash/update-agent-context.sh codex`
+   - Run `.specify/scripts/bash/update-agent-context.sh cursor`
      **IMPORTANT**: Execute it exactly as specified above. Do not add or remove any arguments.
    - If exists: Add only NEW tech from current plan
    - Preserve manual additions between markers
@@ -220,4 +216,4 @@ directories captured above]
 - [ ] Complexity deviations documented
 
 ---
-*Based on Constitution v1.1.0 - See `/memory/constitution.md`*
+*Based on Constitution v2.1.1 - See `/memory/constitution.md`*
