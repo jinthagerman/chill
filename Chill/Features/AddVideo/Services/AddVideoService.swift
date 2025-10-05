@@ -120,7 +120,7 @@ class AddVideoService {
         
         // Prepare submission payload matching actual Supabase schema
         let submission = VideoSubmissionPayload(
-            userId: userId,
+            listOwnerId: userId,
             originalURL: originalURL,
             downloadURL: metadata.videoURL,
             title: metadata.title,
@@ -138,7 +138,7 @@ class AddVideoService {
         do {
             // Debug: Print what we're sending
             print("🔍 Submitting to Supabase videos table:")
-            print("   - user_id: \(userId)")
+            print("   - list_owner_id: \(userId)")
             print("   - original_url: \(originalURL)")
             print("   - platform: \(metadata.platform.rawValue)")
             
@@ -233,7 +233,7 @@ enum AddVideoServiceError: Error, Equatable, LocalizedError {
 
 /// Payload for Supabase video submission
 struct VideoSubmissionPayload: Encodable {
-    let userId: UUID
+    let listOwnerId: UUID
     let originalURL: String
     let downloadURL: String?
     let title: String?
@@ -248,7 +248,7 @@ struct VideoSubmissionPayload: Encodable {
     let fileSizeBytes: Int?
     
     enum CodingKeys: String, CodingKey {
-        case userId = "user_id"
+        case listOwnerId = "list_owner_id"
         case originalURL = "original_url"
         case downloadURL = "download_url"
         case title
