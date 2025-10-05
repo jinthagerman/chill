@@ -49,8 +49,8 @@ class AddVideoViewModel: ObservableObject {
     private let authService: AuthService
     
     /// Current user ID from auth session
-    private var userId: UUID {
-        authService.currentSession?.userID ?? UUID() // Fallback to temp UUID if not logged in
+    private var userId: UUID? {
+        authService.currentSession?.userID
     }
     
     // MARK: - Initialization
@@ -195,6 +195,11 @@ class AddVideoViewModel: ObservableObject {
         
         Task {
             do {
+                // Ensure user is authenticated
+                guard let userId = userId else {
+                    throw AddVideoServiceError.submissionFailed("You must be signed in to save videos")
+                }
+                
                 // Submit to Supabase via AddVideoService
                 let videoId = try await addVideoService.submitToSupabase(
                     metadata: metadata,
@@ -245,6 +250,15 @@ class AddVideoViewModel: ObservableObject {
     private func queueOfflineSubmission(metadata: VideoMetadata) async {
         guard let queue = videoSubmissionQueue,
               let normalizedURL = validationResult?.normalizedURL else {
+            return
+        }
+        
+        // Ensure user is authenticated
+        guard let userId = userId else {
+            await MainActor.run {
+                self.isLoading = false
+                self.errorMessage = "You must be signed in to save videos"
+            }
             return
         }
         
