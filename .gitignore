@@ -28,4 +28,4 @@ fastlane/test_output
 .xcodehome/
 
 ## supabase
-Chill/Resources/Config/SupabaseConfig.plist
+Chill/Resources/Config/SupabaseSecrets.*.xcconfig

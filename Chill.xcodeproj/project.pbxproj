@@ -215,6 +215,8 @@
 /* Begin XCBuildConfiguration section */
 		3CDEE89B2E907DD3006DB079 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 3CDEE87E2E907DD1006DB079 /* Chill */;
+			baseConfigurationReferenceRelativePath = Resources/Config/SupabaseSecrets.dev.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -278,6 +280,8 @@
 		};
 		3CDEE89C2E907DD3006DB079 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 3CDEE87E2E907DD1006DB079 /* Chill */;
+			baseConfigurationReferenceRelativePath = Resources/Config/SupabaseSecrets.prod.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -334,6 +338,8 @@
 		};
 		3CDEE89E2E907DD3006DB079 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 3CDEE87E2E907DD1006DB079 /* Chill */;
+			baseConfigurationReferenceRelativePath = Resources/Config/SupabaseSecrets.dev.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -367,6 +373,8 @@
 		};
 		3CDEE89F2E907DD3006DB079 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 3CDEE87E2E907DD1006DB079 /* Chill */;
+			baseConfigurationReferenceRelativePath = Resources/Config/SupabaseSecrets.prod.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

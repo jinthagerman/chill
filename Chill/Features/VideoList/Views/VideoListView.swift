@@ -4,19 +4,20 @@ import SwiftData
 /// Main video list view displaying vertically scrolling cards with offline support
 struct VideoListView: View {
     @StateObject var viewModel: VideoListViewModel
+    @State private var showAddVideoFlow = false
     
     var body: some View {
         NavigationStack {
             ZStack {
                 contentView
                 
-                // Floating action button (dormant for now)
+                // Floating action button (now active - Task T053)
                 VStack {
                     Spacer()
                     HStack {
                         Spacer()
                         Button(action: {
-                            // TODO: Implement add video functionality
+                            showAddVideoFlow = true
                         }) {
                             Image(systemName: "plus")
                                 .font(.title2)
@@ -31,6 +32,9 @@ struct VideoListView: View {
                         .padding(Spacing.stackMedium)
                     }
                 }
+            }
+            .sheet(isPresented: $showAddVideoFlow) {
+                AddVideoCoordinator()
             }
             .navigationTitle(NSLocalizedString("video_list_title", comment: ""))
             .overlay(alignment: .top) {

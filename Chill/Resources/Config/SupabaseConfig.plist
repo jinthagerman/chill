@@ -3,8 +3,10 @@
 <plist version="1.0">
 <dict>
 	<key>SupabaseURL</key>
-	<string>http://127.0.0.1:54321</string>
+	<string>$(SUPABASE_URL) </string>
 	<key>SupabaseAnonKey</key>
-	<string>sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz</string>
+	<string>$(SUPABASE_ANON_KEY) </string>
+	<key>VideoCardsViewName</key>
+	<string>public.video_cards_view</string>
 </dict>
 </plist>
