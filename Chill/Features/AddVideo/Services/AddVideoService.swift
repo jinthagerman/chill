@@ -119,8 +119,8 @@ class AddVideoService {
     ) async throws -> UUID {
         
         // Prepare submission payload matching actual Supabase schema
+        // Note: user_id is omitted - Supabase RLS auto-injects it from auth.uid()
         let submission = VideoSubmissionPayload(
-            userId: userId,
             originalURL: originalURL,
             downloadURL: metadata.videoURL,
             title: metadata.title,
@@ -221,8 +221,8 @@ enum AddVideoServiceError: Error, Equatable, LocalizedError {
 }
 
 /// Payload for Supabase video submission
+/// Note: user_id is NOT included - Supabase auto-injects it from auth.uid() via RLS
 struct VideoSubmissionPayload: Encodable {
-    let userId: UUID
     let originalURL: String
     let downloadURL: String?
     let title: String?
@@ -237,7 +237,6 @@ struct VideoSubmissionPayload: Encodable {
     let fileSizeBytes: Int?
     
     enum CodingKeys: String, CodingKey {
-        case userId = "user_id"
         case originalURL = "original_url"
         case downloadURL = "download_url"
         case title
