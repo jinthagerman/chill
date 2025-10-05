@@ -199,7 +199,8 @@ class AddVideoViewModel: ObservableObject {
                 let videoId = try await addVideoService.submitToSupabase(
                     metadata: metadata,
                     userNotes: descriptionInput.isEmpty ? nil : descriptionInput,
-                    userId: userId
+                    userId: userId,
+                    originalURL: urlInput
                 )
                 
                 await MainActor.run {

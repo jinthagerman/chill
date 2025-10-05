@@ -133,7 +133,8 @@ class VideoSubmissionQueue {
             let videoId = try await addVideoService.submitToSupabase(
                 metadata: metadata,
                 userNotes: submission.userProvidedDescription,
-                userId: submission.userId
+                userId: submission.userId,
+                originalURL: submission.originalURL
             )
             
             // Mark as completed

@@ -108,27 +108,31 @@ class AddVideoService {
     ///   - metadata: The video metadata to submit
     ///   - userNotes: Optional user-provided notes
     ///   - userId: The user ID (from auth session)
+    ///   - originalURL: The original video URL
     /// - Returns: The created video ID
     /// - Throws: AddVideoServiceError for submission failures
     func submitToSupabase(
         metadata: VideoMetadata,
         userNotes: String?,
-        userId: UUID
+        userId: UUID,
+        originalURL: String
     ) async throws -> UUID {
         
-        // Prepare submission payload
+        // Prepare submission payload matching actual Supabase schema
         let submission = VideoSubmissionPayload(
             userId: userId,
+            originalURL: originalURL,
+            downloadURL: metadata.videoURL,
             title: metadata.title,
             description: metadata.videoDescription, // From video metadata
-            notes: userNotes, // From user input
+            note: userNotes, // From user input (singular 'note' in schema)
             thumbnailURL: metadata.thumbnailURL,
-            videoURL: metadata.videoURL,
-            creator: metadata.creator,
+            creatorUsername: metadata.creator,
+            creatorProfileImageURL: nil, // LoadifyEngine doesn't provide this
             platform: metadata.platform.rawValue,
-            durationSeconds: metadata.duration,
-            publishedDate: metadata.publishedDate,
-            fileSize: metadata.size
+            platformVideoId: nil, // Could extract from URL in future
+            lengthSeconds: metadata.duration,
+            fileSizeBytes: metadata.size != nil ? Int(metadata.size!) : nil
         )
         
         do {
@@ -179,7 +183,8 @@ class AddVideoService {
         let videoId = try await submitToSupabase(
             metadata: metadata,
             userNotes: userNotes,
-            userId: userId
+            userId: userId,
+            originalURL: url
         )
         
         return (videoId, metadata)
@@ -218,29 +223,33 @@ enum AddVideoServiceError: Error, Equatable, LocalizedError {
 /// Payload for Supabase video submission
 struct VideoSubmissionPayload: Encodable {
     let userId: UUID
-    let title: String
+    let originalURL: String
+    let downloadURL: String?
+    let title: String?
     let description: String? // From video metadata (if available)
-    let notes: String? // From user input
-    let thumbnailURL: String
-    let videoURL: String
-    let creator: String
+    let note: String? // From user input (singular 'note' per schema)
+    let thumbnailURL: String?
+    let creatorUsername: String?
+    let creatorProfileImageURL: String?
     let platform: String
-    let durationSeconds: Int?
-    let publishedDate: Date?
-    let fileSize: Double?
+    let platformVideoId: String?
+    let lengthSeconds: Int?
+    let fileSizeBytes: Int?
     
     enum CodingKeys: String, CodingKey {
         case userId = "user_id"
+        case originalURL = "original_url"
+        case downloadURL = "download_url"
         case title
         case description
-        case notes
+        case note
         case thumbnailURL = "thumbnail_url"
-        case videoURL = "video_url"
-        case creator
+        case creatorUsername = "creator_username"
+        case creatorProfileImageURL = "creator_profile_image_url"
         case platform
-        case durationSeconds = "duration_seconds"
-        case publishedDate = "published_date"
-        case fileSize = "file_size"
+        case platformVideoId = "platform_video_id"
+        case lengthSeconds = "length_seconds"
+        case fileSizeBytes = "file_size_bytes"
     }
 }
 
