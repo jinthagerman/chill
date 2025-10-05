@@ -14,8 +14,8 @@ class URLValidator {
     
     // MARK: - Regex Patterns (from research.md)
     
-    /// Facebook URL patterns: standard, watch, share, short (fb.watch), mobile
-    private let facebookPattern = #"^(https?://)?(www\.|m\.)?(facebook\.com/([\w.]+/videos/|watch/\?v=|share/v/)|fb\.watch/)[\w-]+"#
+    /// Facebook URL patterns: standard, watch, share/v/, share/r/, short (fb.watch), mobile
+    private let facebookPattern = #"^(https?://)?(www\.|m\.)?(facebook\.com/([\w.]+/videos/|watch/\?v=|share/[vr]/)|fb\.watch/)[\w-]+"#
     
     /// Twitter URL patterns: twitter.com, x.com, mobile, t.co shortened
     private let twitterPattern = #"^(https?://)?(www\.|mobile\.)?(twitter\.com|x\.com)/[\w]+/status/\d+|^(https?://)?t\.co/[\w]+"#
