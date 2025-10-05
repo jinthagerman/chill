@@ -136,6 +136,12 @@ class AddVideoService {
         )
         
         do {
+            // Debug: Print what we're sending
+            print("🔍 Submitting to Supabase videos table:")
+            print("   - user_id: \(userId)")
+            print("   - original_url: \(originalURL)")
+            print("   - platform: \(metadata.platform.rawValue)")
+            
             // Submit to Supabase 'videos' table
             let response: VideoSubmissionResponse = try await supabaseClient
                 .from("videos")
@@ -145,11 +151,16 @@ class AddVideoService {
                 .execute()
                 .value
             
+            print("✅ Video inserted with ID: \(response.id)")
             return response.id
             
         } catch {
             // Handle Supabase-specific errors
+            print("❌ Supabase error: \(error)")
             if let supabaseError = error as? PostgrestError {
+                print("   - Code: \(supabaseError.code)")
+                print("   - Message: \(supabaseError.message)")
+                
                 switch supabaseError.code {
                 case "23505": // Unique constraint violation
                     throw AddVideoServiceError.duplicateVideo
