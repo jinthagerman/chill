@@ -95,10 +95,11 @@ struct AddVideoConfirmationView: View {
 // MARK: - Preview
 
 #Preview {
-    let viewModel = AddVideoViewModel()
+    let mockAuthService = AuthService(client: MockAuthClientPreview())
+    let viewModel = AddVideoViewModel(authService: mockAuthService)
     viewModel.fetchedMetadata = VideoMetadata(
         title: "The Ultimate Guide to Productivity",
-        description: nil,
+        videoDescription: nil,
         thumbnailURL: "https://via.placeholder.com/640x360",
         creator: "Productivity Pro",
         platform: .twitter,
@@ -108,5 +109,38 @@ struct AddVideoConfirmationView: View {
         size: nil
     )
     
-    return AddVideoConfirmationView(viewModel: viewModel)
+    return AddVideoConfirmationView(viewModel: viewModel) as AddVideoConfirmationView
+}
+
+private class MockAuthClientPreview: AuthServiceClient {
+    var currentSession: AuthClientSession? {
+        AuthClientSession(
+            userID: UUID(),
+            email: "preview@example.com",
+            accessTokenExpiresAt: Date().addingTimeInterval(3600),
+            refreshToken: "mock-token",
+            isVerified: true,
+            raw: nil
+        )
+    }
+    
+    var sessionUpdates: AsyncStream<AuthClientSession?> {
+        AsyncStream { _ in }
+    }
+    
+    func signUp(email: String, password: String, consent: Bool) async throws -> AuthClientSignUpResult {
+        .session(currentSession!)
+    }
+    
+    func signIn(email: String, password: String) async throws -> AuthClientSession {
+        currentSession!
+    }
+    
+    func signOut() async throws {}
+    
+    func sendPasswordReset(email: String) async throws {}
+    
+    func verifyOTP(email: String, token: String, newPassword: String) async throws -> AuthClientSession {
+        currentSession!
+    }
 }

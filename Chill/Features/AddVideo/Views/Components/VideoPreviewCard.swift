@@ -123,7 +123,7 @@ struct VideoPreviewCard: View {
     VideoPreviewCard(
         metadata: VideoMetadata(
             title: "The Ultimate Guide to Productivity",
-            description: nil,
+            videoDescription: nil,
             thumbnailURL: "https://via.placeholder.com/640x360",
             creator: "Productivity Pro",
             platform: .twitter,

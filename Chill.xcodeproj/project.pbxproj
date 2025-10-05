@@ -21,14 +21,57 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		3CBFBB3A2E9210A800CCE839 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		3CDEE87C2E907DD1006DB079 /* Chill.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chill.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CDEE8892E907DD3006DB079 /* ChillTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChillTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3CBFBB2D2E91EC4400CCE839 /* Exceptions for "Chill" folder in "Chill" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Features/AddVideo/README.md,
+				Resources/Config/SupabaseSecrets.dev.xcconfig,
+				Resources/Config/SupabaseSecrets.prod.xcconfig,
+				Resources/Info.plist,
+			);
+			target = 3CDEE87B2E907DD1006DB079 /* Chill */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		3CBFBB3B2E9210A800CCE839 /* Exceptions for "Chill" folder in "Embed Frameworks" phase from "Chill" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			attributesByRelativePath = {
+				LoadifyEngine.xcframework = (CodeSignOnCopy, RemoveHeadersOnCopy, );
+			};
+			buildPhase = 3CBFBB3A2E9210A800CCE839 /* Embed Frameworks */;
+			membershipExceptions = (
+				LoadifyEngine.xcframework,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		3CDEE87E2E907DD1006DB079 /* Chill */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3CBFBB2D2E91EC4400CCE839 /* Exceptions for "Chill" folder in "Chill" target */,
+				3CBFBB3B2E9210A800CCE839 /* Exceptions for "Chill" folder in "Embed Frameworks" phase from "Chill" target */,
+			);
 			path = Chill;
 			sourceTree = "<group>";
 		};
@@ -87,6 +130,7 @@
 				3CDEE8782E907DD1006DB079 /* Sources */,
 				3CDEE8792E907DD1006DB079 /* Frameworks */,
 				3CDEE87A2E907DD1006DB079 /* Resources */,
+				3CBFBB3A2E9210A800CCE839 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -349,6 +393,7 @@
 				DEVELOPMENT_TEAM = KFC4VSDH8H;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Chill/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -384,6 +429,7 @@
 				DEVELOPMENT_TEAM = KFC4VSDH8H;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Chill/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

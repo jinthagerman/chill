@@ -10,6 +10,7 @@
 import Foundation
 import Combine
 import SwiftUI
+import SwiftData
 
 /// ViewModel managing the add video two-step flow
 @MainActor
@@ -40,16 +41,31 @@ class AddVideoViewModel: ObservableObject {
     private let urlValidator: URLValidator
     private var cancellables = Set<AnyCancellable>()
     
-    // MARK: - Dependencies (will be injected)
+    // MARK: - Dependencies
     
-    // private let addVideoService: AddVideoService
-    // private let videoSubmissionQueue: VideoSubmissionQueue
-    // private let modelContext: ModelContext
+    private let addVideoService: AddVideoService
+    private let videoSubmissionQueue: VideoSubmissionQueue?
+    private let modelContext: ModelContext?
+    private let authService: AuthService
+    
+    /// Current user ID from auth session
+    private var userId: UUID {
+        authService.currentSession?.userID ?? UUID() // Fallback to temp UUID if not logged in
+    }
     
     // MARK: - Initialization
     
-    init() {
+    init(
+        addVideoService: AddVideoService? = nil,
+        videoSubmissionQueue: VideoSubmissionQueue? = nil,
+        modelContext: ModelContext? = nil,
+        authService: AuthService
+    ) {
         self.urlValidator = URLValidator()
+        self.addVideoService = addVideoService ?? AddVideoService()
+        self.videoSubmissionQueue = videoSubmissionQueue
+        self.modelContext = modelContext
+        self.authService = authService
         
         setupValidation()
     }
@@ -97,16 +113,16 @@ class AddVideoViewModel: ObservableObject {
     // MARK: - Duplicate Detection (Task T034)
     
     private func checkForDuplicate(normalizedURL: String) {
-        // TODO: Query VideoCardEntity by normalizedURL using ModelContext
-        // For now, set to false (will implement when SwiftData context is available)
-        isDuplicate = false
+        // TODO: Implement proper duplicate detection when video storage schema is ready
+        // For now, we skip duplicate checking since VideoCardEntity doesn't store URLs
+        // This will be implemented once the Supabase videos table includes normalized URLs
         
-        // Implementation will look like:
-        // let descriptor = FetchDescriptor<VideoCardEntity>(
-        //     predicate: #Predicate { $0.url == normalizedURL }
-        // )
-        // let results = try? modelContext.fetch(descriptor)
-        // isDuplicate = !(results?.isEmpty ?? true)
+        // Future implementation:
+        // 1. Query Supabase videos table by normalized_url
+        // 2. Or add normalized_url field to VideoCardEntity
+        // 3. Show warning if duplicate found, but still allow save (per spec)
+        
+        isDuplicate = false
     }
     
     // MARK: - Metadata Fetching (Task T035)
@@ -119,35 +135,49 @@ class AddVideoViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
+        let startTime = Date()
+        
         Task {
             do {
-                // TODO: Implement actual LoadifyEngine call via AddVideoService
-                // For now, simulate delay
-                try await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+                // Track URL submission
+                AddVideoAnalyticsService.shared.trackURLSubmitted(platform: result.platform!.displayName)
                 
-                // Mock metadata for now
-                let mockMetadata = VideoMetadata(
-                    title: "Sample Video",
-                    description: descriptionInput.isEmpty ? nil : descriptionInput,
-                    thumbnailURL: "https://via.placeholder.com/640x360",
-                    creator: "Test Creator",
-                    platform: result.platform!,
-                    duration: 300,
-                    publishedDate: nil,
-                    videoURL: "https://example.com/video.mp4",
-                    size: nil
-                )
+                // Extract metadata using AddVideoService
+                let metadata = try await addVideoService.extractMetadata(from: urlInput)
+                
+                let duration = Int(Date().timeIntervalSince(startTime) * 1000)
                 
                 await MainActor.run {
-                    self.fetchedMetadata = mockMetadata
+                    self.fetchedMetadata = metadata
                     self.isLoading = false
                     self.isConfirmationPresented = true
+                    
+                    // Track successful metadata fetch
+                    AddVideoAnalyticsService.shared.trackMetadataFetched(
+                        platform: metadata.platform.displayName,
+                        durationMs: duration
+                    )
+                    AddVideoAnalyticsService.shared.trackConfirmationOpened()
                 }
                 
+            } catch let error as AddVideoServiceError {
+                await MainActor.run {
+                    self.isLoading = false
+                    self.errorMessage = error.localizedDescription
+                    
+                    // Track error
+                    let errorType = mapServiceErrorToAnalytics(error)
+                    AddVideoAnalyticsService.shared.trackError(
+                        errorType: errorType,
+                        platform: result.platform?.displayName
+                    )
+                }
             } catch {
                 await MainActor.run {
                     self.isLoading = false
                     self.errorMessage = "Unable to fetch video details. Please check the URL and try again."
+                    
+                    AddVideoAnalyticsService.shared.trackError(errorType: .unknownError)
                 }
             }
         }
@@ -160,27 +190,84 @@ class AddVideoViewModel: ObservableObject {
             return
         }
         
+        isLoading = true
+        errorMessage = nil
+        
         Task {
             do {
-                // TODO: Save to Supabase and SwiftData
-                // await addVideoService.submit(metadata)
-                
-                // Simulate save
-                try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+                // Submit to Supabase via AddVideoService
+                let videoId = try await addVideoService.submitToSupabase(
+                    metadata: metadata,
+                    userNotes: descriptionInput.isEmpty ? nil : descriptionInput,
+                    userId: userId
+                )
                 
                 await MainActor.run {
-                    // Dismiss both screens
+                    self.isLoading = false
                     self.isConfirmationPresented = false
                     self.resetState()
                     
-                    // Emit analytics event
-                    self.emitAnalyticsEvent(.videoSaved)
+                    // Track success
+                    AddVideoAnalyticsService.shared.trackVideoSaved(platform: metadata.platform.displayName)
+                    
+                    print("✅ Video saved successfully: \(videoId)")
                 }
                 
+            } catch let error as AddVideoServiceError {
+                // If network error and queue is available, queue for offline submission
+                if case .networkError = error, let queue = videoSubmissionQueue {
+                    await queueOfflineSubmission(metadata: metadata)
+                } else {
+                    await MainActor.run {
+                        self.isLoading = false
+                        self.errorMessage = error.localizedDescription
+                        
+                        let errorType = mapServiceErrorToAnalytics(error)
+                        AddVideoAnalyticsService.shared.trackError(
+                            errorType: errorType,
+                            platform: metadata.platform.displayName
+                        )
+                    }
+                }
             } catch {
                 await MainActor.run {
+                    self.isLoading = false
                     self.errorMessage = "Failed to save video. Please try again."
+                    
+                    AddVideoAnalyticsService.shared.trackError(errorType: .unknownError)
                 }
+            }
+        }
+    }
+    
+    // Queue for offline submission
+    private func queueOfflineSubmission(metadata: VideoMetadata) async {
+        guard let queue = videoSubmissionQueue,
+              let normalizedURL = validationResult?.normalizedURL else {
+            return
+        }
+        
+        do {
+            let submission = try queue.createSubmission(
+                originalURL: urlInput,
+                normalizedURL: normalizedURL,
+                userProvidedDescription: descriptionInput.isEmpty ? nil : descriptionInput,
+                userId: userId
+            )
+            
+            await MainActor.run {
+                self.isLoading = false
+                self.isConfirmationPresented = false
+                self.resetState()
+                
+                print("📥 Video queued for offline submission: \(submission.id)")
+                // TODO: Show toast notification "Video queued, will sync when online"
+            }
+            
+        } catch {
+            await MainActor.run {
+                self.isLoading = false
+                self.errorMessage = "Failed to queue video for offline submission."
             }
         }
     }
@@ -213,9 +300,21 @@ class AddVideoViewModel: ObservableObject {
     
     // MARK: - Analytics (Task T038)
     
-    private func emitAnalyticsEvent(_ eventType: AddVideoEventType) {
-        // TODO: Integrate with existing analytics pipeline
-        print("📊 Analytics: \(eventType.rawValue)")
+    private func mapServiceErrorToAnalytics(_ error: AddVideoServiceError) -> AddVideoEvent.ErrorType {
+        switch error {
+        case .timeout:
+            return .timeout
+        case .extractionFailed:
+            return .extractionFailed
+        case .networkError:
+            return .networkError
+        case .unsupportedPlatform:
+            return .unsupportedPlatform
+        case .duplicateVideo:
+            return .duplicateVideo
+        case .submissionFailed:
+            return .submissionFailed
+        }
     }
     
     // MARK: - Test Helpers
@@ -224,13 +323,4 @@ class AddVideoViewModel: ObservableObject {
         errorMessage = "Network error occurred"
         isLoading = false
     }
-}
-
-// MARK: - Supporting Types
-
-enum AddVideoEventType: String {
-    case inputModalOpened
-    case confirmationScreenOpened
-    case videoSaved
-    case error
 }

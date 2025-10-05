@@ -172,5 +172,40 @@ struct LoadingOverlay: View {
 // MARK: - Preview
 
 #Preview {
-    AddVideoInputView(viewModel: AddVideoViewModel())
+    let mockAuthService = AuthService(client: MockAuthClientForInputPreview())
+    let viewModel = AddVideoViewModel(authService: mockAuthService)
+    return AddVideoInputView(viewModel: viewModel)
+}
+
+private class MockAuthClientForInputPreview: AuthServiceClient {
+    var currentSession: AuthClientSession? {
+        AuthClientSession(
+            userID: UUID(),
+            email: "preview@example.com",
+            accessTokenExpiresAt: Date().addingTimeInterval(3600),
+            refreshToken: "mock-token",
+            isVerified: true,
+            raw: nil
+        )
+    }
+    
+    var sessionUpdates: AsyncStream<AuthClientSession?> {
+        AsyncStream { _ in }
+    }
+    
+    func signUp(email: String, password: String, consent: Bool) async throws -> AuthClientSignUpResult {
+        .session(currentSession!)
+    }
+    
+    func signIn(email: String, password: String) async throws -> AuthClientSession {
+        currentSession!
+    }
+    
+    func signOut() async throws {}
+    
+    func sendPasswordReset(email: String) async throws {}
+    
+    func verifyOTP(email: String, token: String, newPassword: String) async throws -> AuthClientSession {
+        currentSession!
+    }
 }

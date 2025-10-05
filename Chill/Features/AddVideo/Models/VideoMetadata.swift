@@ -16,7 +16,8 @@ struct VideoMetadata: Codable {
     let title: String
     
     /// Video description/summary (optional)
-    let description: String?
+    /// Note: Can't use 'description' as it conflicts with NSObject.description when stored in SwiftData
+    let videoDescription: String?
     
     /// URL to video thumbnail image
     let thumbnailURL: String
@@ -62,7 +63,7 @@ struct VideoMetadata: Codable {
         
         return VideoMetadata(
             title: title,
-            description: nil, // LoadifyEngine doesn't provide description
+            videoDescription: nil, // LoadifyEngine doesn't provide description
             thumbnailURL: loadifyResponse.video.thumbnail,
             creator: creator,
             platform: platform,
