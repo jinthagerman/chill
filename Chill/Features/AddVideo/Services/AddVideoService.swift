@@ -82,7 +82,7 @@ class AddVideoService {
             switch response {
             case .success(let data):
                 loadifyResponse = data
-            case .failure(let error):
+            case .failure(_):
                 throw AddVideoServiceError.extractionFailed
             }
         }
@@ -118,16 +118,29 @@ class AddVideoService {
         originalURL: String
     ) async throws -> UUID {
         
+        let sanitizedTitle = metadata.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let sanitizedDescription = metadata.videoDescription?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalizedTitle = sanitizedTitle.isEmpty ? nil : sanitizedTitle
+        let normalizedDescription: String?
+        if let sanitizedDescription, !sanitizedDescription.isEmpty {
+            normalizedDescription = sanitizedDescription
+        } else {
+            normalizedDescription = nil
+        }
+        let sanitizedCreator = metadata.creator.trimmingCharacters(in: .whitespacesAndNewlines)
+        let normalizedCreator = sanitizedCreator.isEmpty ? nil : sanitizedCreator
+
         // Prepare submission payload matching actual Supabase schema
         let submission = VideoSubmissionPayload(
             listOwnerId: userId,
             originalURL: originalURL,
             downloadURL: metadata.videoURL,
-            title: metadata.title,
-            description: metadata.videoDescription, // From video metadata
+            title: normalizedTitle,
+            description: normalizedDescription,
             note: userNotes, // From user input (singular 'note' in schema)
             thumbnailURL: metadata.thumbnailURL,
-            creatorUsername: metadata.creator,
+            creatorUsername: normalizedCreator,
             creatorProfileImageURL: nil, // LoadifyEngine doesn't provide this
             platform: metadata.platform.rawValue,
             platformVideoId: nil, // Could extract from URL in future
@@ -271,7 +284,7 @@ struct VideoSubmissionResponse: Decodable {
     
     enum CodingKeys: String, CodingKey {
         case id
-        case createdAt = "created_at"
+        case createdAt = "date_added"
     }
 }
 

@@ -86,8 +86,8 @@ final class AddVideoServiceTests: XCTestCase {
         XCTAssertEqual(metadata.platform, .facebook)
     }
     
-    func testMissingCreatorUsesDefault() async throws {
-        // Test fallback to "Unknown creator" when user details missing
+    func testMissingCreatorProducesEmptyString() async throws {
+        // When Loadify does not provide a creator name we expect an empty string
         let testURL = "https://facebook.com/user/videos/123"
         let mockResponse = LoadifyResponse(
             platform: .facebook,
@@ -102,7 +102,7 @@ final class AddVideoServiceTests: XCTestCase {
         
         let metadata = try await service.extractMetadata(from: testURL)
         
-        XCTAssertEqual(metadata.creator, "Unknown creator", "Should use default when creator missing")
+        XCTAssertEqual(metadata.creator, "", "Should return empty string when creator missing")
     }
     
     // MARK: - Error Handling Tests

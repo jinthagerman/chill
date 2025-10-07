@@ -22,7 +22,7 @@ struct VideoMetadata: Codable {
     /// URL to video thumbnail image
     let thumbnailURL: String
     
-    /// Video creator/channel name
+    /// Video creator/channel name (may be empty when not provided)
     let creator: String
     
     /// Source platform (facebook or twitter)
@@ -55,15 +55,17 @@ struct VideoMetadata: Codable {
             }
         }()
         
-        // Use user name as creator, fallback to "Unknown creator"
-        let creator = loadifyResponse.user?.name ?? "Unknown creator"
+        // Use trimmed user name when available, otherwise leave empty
+        let creator = loadifyResponse.user?.name?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         
         // Use video URL or user name as title (LoadifyEngine doesn't provide explicit title)
-        let title = loadifyResponse.user?.name ?? "Video"
+        let title = (loadifyResponse.user?.name ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let description: String? = nil
         
         return VideoMetadata(
             title: title,
-            videoDescription: nil, // LoadifyEngine doesn't provide description
+            videoDescription: description,
             thumbnailURL: loadifyResponse.video.thumbnail,
             creator: creator,
             platform: platform,
