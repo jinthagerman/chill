@@ -38,7 +38,7 @@ actor VideoCardsService: VideoCardsServiceType {
         // Apply ordering and limit (skip cursor for now - pagination can be added later)
         let response: [VideoCardDTO] = try await client.from(tableName)
             .select()
-            .order("updated_at", ascending: false)
+            .order("updated_at", ascending: true)
             .limit(limit)
             .execute()
             .value

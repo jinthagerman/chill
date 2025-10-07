@@ -1,0 +1,26 @@
+# Chill Development Guidelines
+
+Auto-generated from all feature plans. Last updated: 2025-10-05
+
+## Active Technologies
+- Swift 6 (Xcode 16) + SwiftUI, Combine, LoadifyEngine.xcframework, supabase-swift SDK, Chill design tokens (004-implement-add-video)
+- Swift 6 (Xcode 16), SwiftUI (005-split-login-and)
+
+## Project Structure
+```
+src/
+tests/
+```
+
+## Commands
+# Add commands for Swift 6 (Xcode 16)
+
+## Code Style
+Swift 6 (Xcode 16): Follow standard conventions
+
+## Recent Changes
+- 005-split-login-and: Added Swift 6 (Xcode 16), SwiftUI
+- 004-implement-add-video: Added Swift 6 (Xcode 16) + SwiftUI, Combine, LoadifyEngine.xcframework, supabase-swift SDK, Chill design tokens
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->

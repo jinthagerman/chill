@@ -1,12 +1,13 @@
 import XCTest
 @testable import Chill
 
+@MainActor
 final class AuthServiceTests: XCTestCase {
     private var client: FakeAuthClient!
     private var service: AuthService!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         client = FakeAuthClient()
         service = AuthService(client: client)
     }
@@ -66,8 +67,10 @@ final class AuthServiceTests: XCTestCase {
             isVerified: true,
             raw: nil
         )
-        client.currentSession = existingSession
-        service = AuthService(client: client)
+        await MainActor.run {
+            client.currentSession = existingSession
+            service = AuthService(client: client)
+        }
         client.signOutStub = .success(())
 
         try await service.signOut()

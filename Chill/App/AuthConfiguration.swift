@@ -36,56 +36,18 @@ struct AuthConfiguration {
         bundle: Bundle = .main,
         processInfo: ProcessInfo = .processInfo
     ) throws -> AuthConfiguration {
-        if let configuration = try configurationFromEnvironment(processInfo.environment) {
-            return configuration
+        
+        guard let urlString = bundle.object(forInfoDictionaryKey: "SupabaseURL") as? String,
+              let url = validatedURL(from: urlString) else {
+                throw ConfigurationError.invalidSupabaseURL
         }
 
-        guard let resourceURL = locateConfiguration(in: bundle) else {
-            throw ConfigurationError.missingConfigurationFile
-        }
-
-        let data = try Data(contentsOf: resourceURL)
-        let propertyList = try PropertyListSerialization.propertyList(from: data, options: [], format: nil)
-
-        guard let dictionary = propertyList as? [String: Any] else {
-            throw ConfigurationError.invalidConfigurationFormat
-        }
-
-        guard let urlString = dictionary["SupabaseURL"] as? String, let url = validatedURL(from: urlString) else {
-            throw ConfigurationError.invalidSupabaseURL
-        }
-
-        guard let anonKey = dictionary["SupabaseAnonKey"] as? String, anonKey.isEmpty == false else {
+        guard let anonKey = bundle.object(forInfoDictionaryKey: "SupabaseAnonKey") as? String,
+              !anonKey.isEmpty else {
             throw ConfigurationError.missingSupabaseAnonKey
         }
 
         return AuthConfiguration(supabaseURL: url, supabaseAnonKey: anonKey)
-    }
-
-    private static func configurationFromEnvironment(_ environment: [String: String]) throws -> AuthConfiguration? {
-        let urlValue = environment["SUPABASE_URL"]
-        let keyValue = environment["SUPABASE_ANON_KEY"]
-
-        guard urlValue != nil || keyValue != nil else {
-            return nil
-        }
-
-        guard let urlString = urlValue, let url = validatedURL(from: urlString) else {
-            throw ConfigurationError.invalidSupabaseURL
-        }
-
-        guard let anonKey = keyValue, anonKey.isEmpty == false else {
-            throw ConfigurationError.missingSupabaseAnonKey
-        }
-
-        return AuthConfiguration(supabaseURL: url, supabaseAnonKey: anonKey)
-    }
-
-    private static func locateConfiguration(in bundle: Bundle) -> URL? {
-        if let url = bundle.url(forResource: "SupabaseConfig", withExtension: "plist", subdirectory: "Config") {
-            return url
-        }
-        return bundle.url(forResource: "SupabaseConfig", withExtension: "plist")
     }
 
     private static func validatedURL(from value: String) -> URL? {

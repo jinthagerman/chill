@@ -4,19 +4,21 @@ import SwiftData
 /// Main video list view displaying vertically scrolling cards with offline support
 struct VideoListView: View {
     @StateObject var viewModel: VideoListViewModel
+    let authService: AuthService
+    @State private var showAddVideoFlow = false
     
     var body: some View {
         NavigationStack {
             ZStack {
                 contentView
                 
-                // Floating action button (dormant for now)
+                // Floating action button (now active - Task T053)
                 VStack {
                     Spacer()
                     HStack {
                         Spacer()
                         Button(action: {
-                            // TODO: Implement add video functionality
+                            showAddVideoFlow = true
                         }) {
                             Image(systemName: "plus")
                                 .font(.title2)
@@ -31,6 +33,9 @@ struct VideoListView: View {
                         .padding(Spacing.stackMedium)
                     }
                 }
+            }
+            .sheet(isPresented: $showAddVideoFlow) {
+                AddVideoCoordinator(authService: authService)
             }
             .navigationTitle(NSLocalizedString("video_list_title", comment: ""))
             .overlay(alignment: .top) {
@@ -176,7 +181,9 @@ struct VideoListView: View {
         modelContext: container.mainContext
     )
     
-    return VideoListView(viewModel: viewModel)
+    let mockAuthService = AuthService(client: MockAuthClientForPreview())
+    
+    VideoListView(viewModel: viewModel, authService: mockAuthService)
 }
 
 #Preview("Loaded") {
@@ -210,7 +217,9 @@ struct VideoListView: View {
         modelContext: container.mainContext
     )
     
-    return VideoListView(viewModel: viewModel)
+    let mockAuthService = AuthService(client: MockAuthClientForPreview())
+    
+    VideoListView(viewModel: viewModel, authService: mockAuthService)
 }
 
 // MARK: - Mock Service for Previews
@@ -238,5 +247,40 @@ private final class MockVideoCardsService: VideoCardsServiceType, @unchecked Sen
     
     func subscribeToCardStream(since: Date) -> AsyncThrowingStream<VideoCardStreamEvent, Error> {
         AsyncThrowingStream { _ in }
+    }
+}
+
+// MARK: - Mock Auth Client for Previews
+
+private class MockAuthClientForPreview: AuthServiceClient {
+    var currentSession: AuthClientSession? {
+        AuthClientSession(
+            userID: UUID(),
+            email: "preview@example.com",
+            accessTokenExpiresAt: Date().addingTimeInterval(3600),
+            refreshToken: "mock-token",
+            isVerified: true,
+            raw: nil
+        )
+    }
+    
+    var sessionUpdates: AsyncStream<AuthClientSession?> {
+        AsyncStream { _ in }
+    }
+    
+    func signUp(email: String, password: String, consent: Bool) async throws -> AuthClientSignUpResult {
+        .session(currentSession!)
+    }
+    
+    func signIn(email: String, password: String) async throws -> AuthClientSession {
+        currentSession!
+    }
+    
+    func signOut() async throws {}
+    
+    func sendPasswordReset(email: String) async throws {}
+    
+    func verifyOTP(email: String, token: String, newPassword: String) async throws -> AuthClientSession {
+        currentSession!
     }
 }

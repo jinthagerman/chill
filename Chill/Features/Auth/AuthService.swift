@@ -185,6 +185,8 @@ final class AuthService: AuthServiceType {
                 return .rateLimited
             case "otp_expired", "otp_disabled", "otp_invalid":
                 return .otpIncorrect
+            case "user_already_exists":
+                return .duplicateEmail
             case "session_not_found", "session_expired":
                 sessionSubject.send(nil)
                 return .invalidCredentials

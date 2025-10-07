@@ -76,7 +76,7 @@ final class AuthCoordinator: ObservableObject {
     }
     
     func makeVideoListView(modelContext: ModelContext) -> VideoListView {
-        guard authService != nil else {
+        guard let authService = authService else {
             fatalError("AuthService not initialized")
         }
         
@@ -87,7 +87,7 @@ final class AuthCoordinator: ObservableObject {
                 service: service,
                 modelContext: modelContext
             )
-            return VideoListView(viewModel: viewModel)
+            return VideoListView(viewModel: viewModel, authService: authService)
         } catch {
             fatalError("Failed to initialize VideoListView: \(error)")
         }
