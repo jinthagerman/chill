@@ -4,6 +4,7 @@ import Foundation
 @MainActor
 final class AuthViewModel: ObservableObject {
     @Published var mode: AuthMode
+    @Published var navigationState: AuthNavigationState  // Added in 005-split-login-and
     @Published var email: String
     @Published var password: String
     @Published var confirmPassword: String
@@ -29,6 +30,18 @@ final class AuthViewModel: ObservableObject {
     ) {
         self.service = service
         self.mode = initialMode
+        // Initialize navigationState to match mode for backward compatibility
+        // TODO: Eventually remove mode and use navigationState exclusively
+        switch initialMode {
+        case .login:
+            self.navigationState = .choice  // Start at choice screen by default
+        case let .signup(consentAccepted):
+            self.navigationState = .signup(consentAccepted: consentAccepted)
+        case .resetRequest:
+            self.navigationState = .resetRequest
+        case let .resetVerify(email):
+            self.navigationState = .resetVerify(pendingEmail: email)
+        }
         self.email = ""
         self.password = ""
         self.confirmPassword = ""
@@ -210,6 +223,43 @@ final class AuthViewModel: ObservableObject {
         statusBanner = nil
         errorMessage = nil
     }
+    
+    // MARK: - Navigation Methods (Added in 005-split-login-and)
+    
+    /// Navigate to the choice screen (entry point)
+    func navigateToChoice() {
+        email = ""
+        password = ""
+        confirmPassword = ""
+        otpCode = ""
+        errorMessage = nil
+        statusBanner = nil
+        navigationState = .choice
+    }
+    
+    /// Navigate to the login screen
+    func navigateToLogin() {
+        navigationState = .login
+    }
+    
+    /// Navigate to the signup screen with consent initially false
+    func navigateToSignup() {
+        navigationState = .signup(consentAccepted: false)
+    }
+    
+    /// Navigate to password reset request screen, preserving email
+    func navigateToResetRequest() {
+        password = ""
+        errorMessage = nil
+        statusBanner = nil
+        navigationState = .resetRequest
+    }
+    
+    /// Update consent state for signup (only works when in signup state)
+    func updateConsent(_ accepted: Bool) {
+        guard case .signup = navigationState else { return }
+        navigationState = .signup(consentAccepted: accepted)
+    }
 
     func updateNetworkStatus(_ status: NetworkReachability) {
         networkStatus = status
@@ -245,6 +295,12 @@ final class AuthViewModel: ObservableObject {
     }
 
     private func performSignup(consentAccepted: Bool) async {
+        // Client-side password validation (Added in 005-split-login-and)
+        guard password == confirmPassword else {
+            errorMessage = "Passwords don't match"
+            return
+        }
+        
         guard consentAccepted else {
             errorMessage = "You must accept the terms to continue."
             return
@@ -293,6 +349,8 @@ final class AuthViewModel: ObservableObject {
             return "Too many attempts. Please try again shortly."
         case AuthError.otpIncorrect:
             return "That code isn't right. Double-check and try again."
+        case AuthError.duplicateEmail:
+            return "An account with this email already exists. Try logging in instead."
         default:
             return "Something went wrong. Please try again."
         }
@@ -330,6 +388,8 @@ final class AuthViewModel: ObservableObject {
             return "rate_limited"
         case .otpIncorrect:
             return "otp_incorrect"
+        case .duplicateEmail:
+            return "duplicate_email"
         case .unknown:
             return "unknown"
         }

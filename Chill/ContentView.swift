@@ -38,7 +38,7 @@ struct ContentView: View {
             WelcomeView(viewModel: coordinator.makeWelcomeViewModel())
         case .auth:
             if let viewModel = coordinator.authViewModel {
-                AuthView(viewModel: viewModel)
+                AuthFlowCoordinator(viewModel: viewModel)
             } else {
                 EmptyView()
             }

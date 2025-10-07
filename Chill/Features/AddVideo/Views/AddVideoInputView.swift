@@ -61,6 +61,7 @@ struct AddVideoInputView: View {
             TextEditor(text: $viewModel.descriptionInput)
                 .frame(minHeight: 120)
                 .padding(8)
+                .scrollContentBackground(.hidden)
                 .background(Color(.systemGray6))
                 .cornerRadius(12)
                 .overlay(alignment: .topLeading) {

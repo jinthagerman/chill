@@ -22,12 +22,14 @@ class AddVideoViewModel: ObservableObject {
     @Published var descriptionInput: String = ""
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
+    @Published var confirmationErrorMessage: String?
     @Published var isDuplicate: Bool = false
     
     // MARK: - Published Properties (Confirmation View)
     
     @Published var fetchedMetadata: VideoMetadata?
     @Published var isConfirmationPresented: Bool = false
+    @Published var shouldDismissFlow: Bool = false
     
     // MARK: - Computed Properties
     
@@ -134,6 +136,8 @@ class AddVideoViewModel: ObservableObject {
         
         isLoading = true
         errorMessage = nil
+        confirmationErrorMessage = nil
+        shouldDismissFlow = false
         
         let startTime = Date()
         
@@ -192,6 +196,8 @@ class AddVideoViewModel: ObservableObject {
         
         isLoading = true
         errorMessage = nil
+        confirmationErrorMessage = nil
+        shouldDismissFlow = false
         
         Task {
             do {
@@ -211,7 +217,10 @@ class AddVideoViewModel: ObservableObject {
                 await MainActor.run {
                     self.isLoading = false
                     self.isConfirmationPresented = false
-                    self.resetState()
+                    self.resetState(clearDismissFlag: false)
+                    self.shouldDismissFlow = true
+                    self.confirmationErrorMessage = nil
+                    self.errorMessage = nil
                     
                     // Track success
                     AddVideoAnalyticsService.shared.trackVideoSaved(platform: metadata.platform.displayName)
@@ -221,12 +230,13 @@ class AddVideoViewModel: ObservableObject {
                 
             } catch let error as AddVideoServiceError {
                 // If network error and queue is available, queue for offline submission
-                if case .networkError = error, let queue = videoSubmissionQueue {
+                if case .networkError = error, videoSubmissionQueue != nil {
                     await queueOfflineSubmission(metadata: metadata)
                 } else {
                     await MainActor.run {
                         self.isLoading = false
-                        self.errorMessage = error.localizedDescription
+                        self.errorMessage = nil
+                        self.confirmationErrorMessage = error.localizedDescription
                         
                         let errorType = mapServiceErrorToAnalytics(error)
                         AddVideoAnalyticsService.shared.trackError(
@@ -238,7 +248,8 @@ class AddVideoViewModel: ObservableObject {
             } catch {
                 await MainActor.run {
                     self.isLoading = false
-                    self.errorMessage = "Failed to save video. Please try again."
+                    self.errorMessage = nil
+                    self.confirmationErrorMessage = "Failed to save video. Please try again."
                     
                     AddVideoAnalyticsService.shared.trackError(errorType: .unknownError)
                 }
@@ -250,6 +261,11 @@ class AddVideoViewModel: ObservableObject {
     private func queueOfflineSubmission(metadata: VideoMetadata) async {
         guard let queue = videoSubmissionQueue,
               let normalizedURL = validationResult?.normalizedURL else {
+            await MainActor.run {
+                self.isLoading = false
+                self.errorMessage = nil
+                self.confirmationErrorMessage = "Failed to queue video for offline submission."
+            }
             return
         }
         
@@ -273,7 +289,10 @@ class AddVideoViewModel: ObservableObject {
             await MainActor.run {
                 self.isLoading = false
                 self.isConfirmationPresented = false
-                self.resetState()
+                self.resetState(clearDismissFlag: false)
+                self.shouldDismissFlow = true
+                self.confirmationErrorMessage = nil
+                self.errorMessage = nil
                 
                 print("📥 Video queued for offline submission: \(submission.id)")
                 // TODO: Show toast notification "Video queued, will sync when online"
@@ -282,7 +301,8 @@ class AddVideoViewModel: ObservableObject {
         } catch {
             await MainActor.run {
                 self.isLoading = false
-                self.errorMessage = "Failed to queue video for offline submission."
+                self.errorMessage = nil
+                self.confirmationErrorMessage = "Failed to queue video for offline submission."
             }
         }
     }
@@ -302,15 +322,21 @@ class AddVideoViewModel: ObservableObject {
         // Task: "Edit Details" - return to input modal with pre-filled data
         isConfirmationPresented = false
         // Keep urlInput and descriptionInput as-is for editing
+        confirmationErrorMessage = nil
+        shouldDismissFlow = false
     }
     
-    private func resetState() {
+    private func resetState(clearDismissFlag: Bool = true) {
         urlInput = ""
         descriptionInput = ""
         errorMessage = nil
+        confirmationErrorMessage = nil
         isDuplicate = false
         fetchedMetadata = nil
         validationResult = nil
+        if clearDismissFlag {
+            shouldDismissFlow = false
+        }
     }
     
     // MARK: - Analytics (Task T038)

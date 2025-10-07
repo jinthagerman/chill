@@ -40,12 +40,32 @@ enum AuthMode: Equatable, Hashable {
     case resetVerify(pendingEmail: String)
 }
 
+/// Navigation state for the authentication flow
+/// Represents the current screen in the three-screen auth flow (choice, login, signup)
+/// Added in: 005-split-login-and
+enum AuthNavigationState: Equatable, Hashable {
+    case choice
+    case login
+    case signup(consentAccepted: Bool)
+    case resetRequest
+    case resetVerify(pendingEmail: String)
+    
+    /// Computed property to get consent state for signup
+    var consentAccepted: Bool {
+        if case let .signup(accepted) = self {
+            return accepted
+        }
+        return false
+    }
+}
+
 enum AuthError: Error, Equatable {
     case networkUnavailable
     case invalidCredentials
     case emailUnverified
     case rateLimited
     case otpIncorrect
+    case duplicateEmail  // Added in: 005-split-login-and for user_already_exists error
     case unknown
 }
 
@@ -94,6 +114,15 @@ struct AuthEventPayload {
         self.networkStatus = networkStatus
         self.phase = phase
     }
+}
+
+/// Field focus management for auth forms
+/// Added in: 005-split-login-and
+enum AuthField: Hashable {
+    case email
+    case password
+    case confirmPassword
+    case otp
 }
 
 struct AuthBanner: Equatable {

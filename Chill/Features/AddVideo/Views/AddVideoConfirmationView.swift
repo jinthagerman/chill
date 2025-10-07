@@ -35,13 +35,19 @@ struct AddVideoConfirmationView: View {
                             .padding(.horizontal, 16)
                         
                         Spacer()
-                        
+
+                        if let errorMessage = viewModel.confirmationErrorMessage {
+                            Text(errorMessage)
+                                .font(.system(size: 14))
+                                .foregroundColor(.red)
+                                .padding(.horizontal, 16)
+                        }
+
                         // Action Buttons - Task T050
                         VStack(spacing: 12) {
                             // Confirm and Save Button (Primary)
                             Button {
                                 viewModel.confirmAndSave()
-                                dismiss()
                             } label: {
                                 Text("Confirm and Save")
                                     .font(.system(size: 17, weight: .semibold))
@@ -51,6 +57,7 @@ struct AddVideoConfirmationView: View {
                                     .background(Color.black)
                                     .cornerRadius(12)
                             }
+                            .disabled(viewModel.isLoading)
                             .accessibilityLabel("Confirm and save video to library")
                             
                             // Edit Details Button (Secondary)
@@ -89,6 +96,11 @@ struct AddVideoConfirmationView: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Confirm video details")
+        .overlay {
+            if viewModel.isLoading {
+                LoadingOverlay()
+            }
+        }
     }
 }
 

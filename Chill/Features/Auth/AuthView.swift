@@ -353,7 +353,9 @@ private enum AuthSegment: String, CaseIterable, Identifiable {
     }
 }
 
-private struct BannerView: View {
+/// Shared banner view for displaying status messages
+/// Made internal for use across auth views (005-split-login-and)
+struct BannerView: View {
     let banner: AuthBanner
 
     var body: some View {

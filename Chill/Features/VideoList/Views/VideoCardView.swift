@@ -15,7 +15,7 @@ struct VideoCardView: View {
                     case .success(let image):
                         image
                             .resizable()
-                            .aspectRatio(16/9, contentMode: .fill)
+                            .aspectRatio(16/9, contentMode: .fit)
                     case .failure:
                         placeholderThumbnail
                     @unknown default:
@@ -80,7 +80,7 @@ struct VideoCardView: View {
     private var placeholderThumbnail: some View {
         Image(VideoListConfig.placeholderImageName)
             .resizable()
-            .aspectRatio(16/9, contentMode: .fill)
+            .aspectRatio(16/9, contentMode: .fit)
             .frame(maxWidth: .infinity)
             .frame(height: 200)
             .background(Color.gray.opacity(0.3))

@@ -21,7 +21,6 @@ struct AddVideoCoordinator: View {
     init(authService: AuthService) {
         self.authService = authService
         _viewModel = StateObject(wrappedValue: AddVideoViewModel(
-            modelContext: nil, // Will be set from environment
             authService: authService
         ))
     }
@@ -31,18 +30,10 @@ struct AddVideoCoordinator: View {
             .fullScreenCover(isPresented: $viewModel.isConfirmationPresented) {
                 AddVideoConfirmationView(viewModel: viewModel)
             }
-            .onChange(of: viewModel.isConfirmationPresented) { _, isPresented in
-                // When confirmation screen is dismissed and metadata flow completes
-                if !isPresented && viewModel.fetchedMetadata != nil {
-                    // If we successfully saved, dismiss the entire flow
-                    dismiss()
-                }
-            }
-            .onAppear {
-                // Inject ModelContext from environment
-                if let context = try? modelContext {
-                    // Update viewModel with context if needed
-                }
+            .onChange(of: viewModel.shouldDismissFlow) { _, shouldDismiss in
+                guard shouldDismiss else { return }
+                dismiss()
+                viewModel.shouldDismissFlow = false
             }
     }
 }
