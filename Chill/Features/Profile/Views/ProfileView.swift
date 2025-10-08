@@ -7,6 +7,8 @@ struct ProfileView: View {
     @ObservedObject var viewModel: ProfileViewModel
     let settingsService: SettingsServiceType
     let authService: AuthServiceType
+    let onDismiss: () -> Void  // Added: Navigation back callback
+    let onSignOut: () async -> Void  // Added: Sign out callback
     @State private var videoPreferences: VideoPreferences = .default
     @State private var showingChangePassword = false
     
@@ -26,6 +28,18 @@ struct ProfileView: View {
             }
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: onDismiss) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                            Text("Videos")
+                        }
+                    }
+                    .accessibilityLabel("Back to videos")
+                    .accessibilityIdentifier("profile_back_button")
+                }
+            }
             .onAppear {
                 Task {
                     await viewModel.loadProfile()
@@ -145,8 +159,8 @@ struct ProfileView: View {
     
     private func signOut() {
         Task {
-            try? await viewModel.signOut()
-            // Note: AuthCoordinator will handle route change via session publisher
+            // Call coordinator's signOut which handles both auth service and route change
+            await onSignOut()
         }
     }
 }
@@ -164,7 +178,9 @@ struct ProfileView: View {
             authService: mockAuth
         ),
         settingsService: mockSettingsService,
-        authService: mockAuth
+        authService: mockAuth,
+        onDismiss: { },
+        onSignOut: { }
     )
 }
 

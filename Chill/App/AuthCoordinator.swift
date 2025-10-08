@@ -125,7 +125,13 @@ final class AuthCoordinator: ObservableObject {
             return ProfileView(
                 viewModel: profileViewModel,
                 settingsService: settingsService,
-                authService: authService
+                authService: authService,
+                onDismiss: { [weak self] in
+                    self?.dismissProfile()
+                },
+                onSignOut: { [weak self] in
+                    await self?.signOut()
+                }
             )
         } catch {
             fatalError("Failed to initialize ProfileView: \(error)")
@@ -136,6 +142,12 @@ final class AuthCoordinator: ObservableObject {
     /// Added in: 006-add-a-profile
     func presentProfile() {
         route = .profile
+    }
+    
+    /// Dismiss profile and return to video list
+    /// Added in: 006-add-a-profile
+    func dismissProfile() {
+        route = .videoList
     }
 
     func presentAuth(mode: AuthMode) {
