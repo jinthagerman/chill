@@ -46,6 +46,8 @@ struct ContentView: View {
             SavedLinksView()
         case .videoList:
             coordinator.makeVideoListView(modelContext: modelContext)
+        case .profile:
+            coordinator.makeProfileView()
         }
     }
 }

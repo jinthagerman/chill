@@ -19,6 +19,7 @@ tests/
 Swift 6 (Xcode 16): Follow standard conventions
 
 ## Recent Changes
+- 006-add-a-profile: Added Swift 6 (Xcode 16), SwiftUI
 - 005-split-login-and: Added Swift 6 (Xcode 16), SwiftUI
 - 004-implement-add-video: Added Swift 6 (Xcode 16) + SwiftUI, Combine, LoadifyEngine.xcframework, supabase-swift SDK, Chill design tokens
 

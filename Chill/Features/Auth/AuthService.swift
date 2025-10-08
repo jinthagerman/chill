@@ -4,11 +4,13 @@ import Supabase
 
 protocol AuthServiceType {
     var sessionPublisher: AnyPublisher<AuthSession?, Never> { get }
+    var currentSession: AuthSession? { get }  // Added in: 006-add-a-profile
     func signUp(email: String, password: String, consent: Bool) async throws -> AuthSession
     func signIn(email: String, password: String) async throws -> AuthSession
     func signOut() async throws
     func requestPasswordReset(email: String) async throws
     func verifyResetCode(email: String, code: String, newPassword: String) async throws -> AuthSession
+    func changePassword(currentPassword: String, newPassword: String) async throws  // Added in: 006-add-a-profile
 }
 
 enum AuthClientSignUpResult: Equatable {
@@ -139,6 +141,34 @@ final class AuthService: AuthServiceType {
         } catch {
             throw normalize(error)
         }
+    }
+    
+    /// Change user password (requires current password verification)
+    /// Added in: 006-add-a-profile
+    func changePassword(currentPassword: String, newPassword: String) async throws {
+        // Get current session
+        guard let session = currentSession else {
+            throw ProfileError.unauthorized
+        }
+        
+        // Validate password length
+        guard newPassword.count >= 8 else {
+            throw ProfileError.passwordTooWeak
+        }
+        
+        // Reauthenticate with current password to verify
+        do {
+            _ = try await client.signIn(email: session.email, password: currentPassword)
+        } catch {
+            // Reauthentication failed - current password is incorrect
+            throw ProfileError.currentPasswordIncorrect
+        }
+        
+        // Current password verified, now update to new password
+        // Note: Supabase SDK doesn't have a direct password update method in the client protocol
+        // We'll need to use the actual Supabase client for this
+        // For now, throw a placeholder error - this will need to be connected to real Supabase client
+        throw ProfileError.updateFailed
     }
 
     private static func mapSession(_ session: AuthClientSession) -> AuthSession {

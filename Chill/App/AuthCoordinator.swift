@@ -3,6 +3,7 @@ import Network
 import Combine
 import SwiftUI
 import SwiftData
+import Supabase  // Added in: 006-add-a-profile
 
 @MainActor
 final class AuthCoordinator: ObservableObject {
@@ -11,6 +12,7 @@ final class AuthCoordinator: ObservableObject {
         case auth
         case savedLinks
         case videoList
+        case profile  // Added in: 006-add-a-profile
     }
 
     enum BootstrapState {
@@ -87,10 +89,53 @@ final class AuthCoordinator: ObservableObject {
                 service: service,
                 modelContext: modelContext
             )
-            return VideoListView(viewModel: viewModel, authService: authService)
+            return VideoListView(
+                viewModel: viewModel,
+                authService: authService,
+                onProfileTap: { [weak self] in
+                    self?.presentProfile()
+                }
+            )
         } catch {
             fatalError("Failed to initialize VideoListView: \(error)")
         }
+    }
+    
+    /// Create and present the profile view
+    /// Added in: 006-add-a-profile
+    func makeProfileView() -> ProfileView {
+        guard let authService = authService else {
+            fatalError("AuthService not initialized")
+        }
+        
+        do {
+            let configuration = try AuthConfiguration.load()
+            // Create new Supabase client for profile services
+            let supabaseClient = SupabaseClient(
+                supabaseURL: configuration.supabaseURL,
+                supabaseKey: configuration.supabaseAnonKey
+            )
+            let profileService = ProfileService(client: supabaseClient)
+            let settingsService = SettingsService(client: supabaseClient)
+            let profileViewModel = ProfileViewModel(
+                profileService: profileService,
+                authService: authService
+            )
+            
+            return ProfileView(
+                viewModel: profileViewModel,
+                settingsService: settingsService,
+                authService: authService
+            )
+        } catch {
+            fatalError("Failed to initialize ProfileView: \(error)")
+        }
+    }
+    
+    /// Navigate to profile page
+    /// Added in: 006-add-a-profile
+    func presentProfile() {
+        route = .profile
     }
 
     func presentAuth(mode: AuthMode) {

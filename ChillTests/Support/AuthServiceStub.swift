@@ -12,6 +12,10 @@ final class AuthServiceStub: AuthServiceType {
     var sessionPublisher: AnyPublisher<AuthSession?, Never> {
         subject.eraseToAnyPublisher()
     }
+    
+    var currentSession: AuthSession? {
+        subject.value
+    }
 
     var signUpResult: Result<AuthSession, Error>?
     var signInResult: Result<AuthSession, Error>?
@@ -60,5 +64,10 @@ final class AuthServiceStub: AuthServiceType {
         let session = try result.get()
         subject.send(session)
         return session
+    }
+    
+    func changePassword(currentPassword: String, newPassword: String) async throws {
+        // Stub implementation for password change
+        // Added in: 006-add-a-profile
     }
 }
