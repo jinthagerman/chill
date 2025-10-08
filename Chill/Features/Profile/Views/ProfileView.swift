@@ -76,48 +76,43 @@ struct ProfileView: View {
     
     private func loadedView(profile: UserProfile) -> some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: 0) {
                 // Profile header (account info)
                 ProfileHeaderView(profile: profile)
                 
-                // Video preferences
-                VideoPreferencesView(
-                    preferences: $videoPreferences,
-                    onSave: { prefs in
-                        try? await settingsService.updateVideoPreferences(prefs)
+                // Settings section
+                VStack(alignment: .leading, spacing: 16) {
+                    // "Settings" header
+                    Text("Settings")
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundColor(.primary)
+                        .padding(.horizontal, 20)
+                    
+                    // Settings list
+                    VStack(spacing: 0) {
+                        // Video preferences
+                        VideoPreferencesView(
+                            preferences: $videoPreferences,
+                            onSave: { prefs in
+                                try? await settingsService.updateVideoPreferences(prefs)
+                            }
+                        )
+                        
+                        // Account security / Change Password
+                        AccountSecurityView(
+                            onChangePassword: {
+                                showingChangePassword = true
+                            }
+                        )
                     }
-                )
-                
-                // Account security
-                AccountSecurityView(
-                    onChangePassword: {
-                        showingChangePassword = true
-                    }
-                )
-                
-                // Sign out button
-                Button(action: signOut) {
-                    HStack {
-                        Spacer()
-                        Text("Sign Out")
-                            .fontWeight(.semibold)
-                            .foregroundColor(.red)
-                        Spacer()
-                    }
-                    .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(12)
                 }
-                .accessibilityIdentifier("sign_out")
-                .accessibilityLabel("Sign Out")
-                .padding(.horizontal)
+                .padding(.vertical, 10)
                 
                 // Spacer at bottom for better scrolling
-                Spacer(minLength: 40)
+                Spacer(minLength: 100)
             }
-            .padding()
         }
-        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        .background(Color(.systemBackground))
     }
     
     // MARK: - Error View

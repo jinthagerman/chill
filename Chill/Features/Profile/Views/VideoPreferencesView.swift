@@ -9,69 +9,54 @@ struct VideoPreferencesView: View {
     @State private var showingSaveConfirmation = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            // Section header
-            Text("Video Preferences")
-                .font(.headline)
-                .foregroundColor(.primary)
-            
-            // Video quality picker
-            VStack(alignment: .leading, spacing: 8) {
+        VStack(spacing: 0) {
+            // Video Quality row
+            HStack {
                 Text("Video Quality")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .font(.body)
+                    .foregroundColor(.primary)
                 
-                Picker("Video Quality", selection: $preferences.quality) {
+                Spacer()
+                
+                Picker("", selection: $preferences.quality) {
                     ForEach(VideoQuality.allCases, id: \.self) { quality in
                         Text(quality.displayName)
                             .tag(quality)
-                            .accessibilityIdentifier("quality_\(quality.rawValue)")
                     }
                 }
                 .pickerStyle(.menu)
                 .accessibilityIdentifier("video_quality_setting")
-                .accessibilityLabel("Video quality")
                 .onChange(of: preferences.quality) { _, _ in
                     savePreferences()
                 }
             }
+            .padding()
+            .background(Color(.systemBackground))
             
             Divider()
+                .padding(.leading)
             
-            // Autoplay toggle
-            Toggle(isOn: $preferences.autoplay) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Autoplay")
-                        .font(.subheadline)
-                        .foregroundColor(.primary)
-                    
-                    Text("Start playing videos automatically")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+            // Autoplay toggle row
+            HStack {
+                Text("Autoplay")
+                    .font(.body)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                Toggle("", isOn: $preferences.autoplay)
+                    .labelsHidden()
+                    .accessibilityIdentifier("autoplay_toggle")
+                    .onChange(of: preferences.autoplay) { _, _ in
+                        savePreferences()
+                    }
             }
-            .accessibilityIdentifier("autoplay_toggle")
-            .accessibilityLabel("Autoplay")
-            .accessibilityHint("Double tap to toggle autoplay on or off")
-            .onChange(of: preferences.autoplay) { _, _ in
-                savePreferences()
-            }
+            .padding()
+            .background(Color(.systemBackground))
             
-            // Save confirmation
-            if showingSaveConfirmation {
-                HStack {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.green)
-                    Text("Setting saved")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                .transition(.opacity)
-            }
+            Divider()
+                .padding(.leading)
         }
-        .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
     }
     
     // MARK: - Helper Functions

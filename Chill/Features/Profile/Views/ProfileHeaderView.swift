@@ -6,91 +6,61 @@ struct ProfileHeaderView: View {
     let profile: UserProfile
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Display name (large, bold)
+        VStack(spacing: 20) {
+            // Avatar (circular placeholder with person icon)
+            ZStack {
+                Circle()
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: 120, height: 120)
+                
+                Image(systemName: "person.fill")
+                    .font(.system(size: 50))
+                    .foregroundColor(.white)
+            }
+            .accessibilityLabel("Profile avatar")
+            
+            // Display name (large, bold, centered)
             Text(profile.displayName)
-                .font(.system(size: 28, weight: .bold))
+                .font(.system(size: 32, weight: .bold))
                 .foregroundColor(.primary)
                 .accessibilityLabel("Display name: \(profile.displayName)")
             
-            // Email address with verification badge
+            // Email/username with verification badge (centered)
             HStack(spacing: 6) {
-                Text(profile.email)
-                    .font(.subheadline)
+                Text("@\(formatUsername(profile.email))")
+                    .font(.body)
                     .foregroundColor(.secondary)
                 
                 if profile.isVerified {
                     Image(systemName: "checkmark.seal.fill")
                         .foregroundColor(.blue)
-                        .font(.caption)
+                        .font(.body)
                 }
             }
-            .accessibilityLabel(profile.isVerified ? "Email: \(profile.email), verified" : "Email: \(profile.email)")
+            .accessibilityLabel(profile.isVerified ? "Username: \(formatUsername(profile.email)), verified" : "Username: \(formatUsername(profile.email))")
             
-            Divider()
-                .padding(.vertical, 4)
-            
-            // Account stats grid
-            VStack(alignment: .leading, spacing: 12) {
-                // Account creation date
-                HStack {
-                    Image(systemName: "calendar")
-                        .foregroundColor(.secondary)
-                        .frame(width: 24)
-                    
-                    Text("Joined \(formatAccountCreationDate(profile.accountCreatedAt))")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
+            // Joined date (centered)
+            Text("Joined \(formatAccountYear(profile.accountCreatedAt))")
+                .font(.body)
+                .foregroundColor(.secondary)
                 .accessibilityIdentifier("account_created")
-                .accessibilityLabel("Joined \(formatAccountCreationDate(profile.accountCreatedAt))")
-                
-                // Last login
-                if let lastLogin = profile.lastLoginAt {
-                    HStack {
-                        Image(systemName: "clock")
-                            .foregroundColor(.secondary)
-                            .frame(width: 24)
-                        
-                        Text("Last active \(formatRelativeTime(lastLogin))")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                    .accessibilityIdentifier("last_login")
-                    .accessibilityLabel("Last active \(formatRelativeTime(lastLogin))")
-                }
-                
-                // Saved videos count
-                HStack {
-                    Image(systemName: "video.fill")
-                        .foregroundColor(.secondary)
-                        .frame(width: 24)
-                    
-                    Text("\(profile.savedVideosCount) videos saved")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                .accessibilityIdentifier("saved_videos_count")
-                .accessibilityLabel("\(profile.savedVideosCount) videos saved")
-            }
+                .accessibilityLabel("Joined \(formatAccountYear(profile.accountCreatedAt))")
         }
-        .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 40)
     }
     
     // MARK: - Helper Functions
     
-    private func formatAccountCreationDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
-        return formatter.string(from: date)
+    private func formatUsername(_ email: String) -> String {
+        // Extract username from email (part before @)
+        return email.components(separatedBy: "@").first ?? email
     }
     
-    private func formatRelativeTime(_ date: Date) -> String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .full
-        return formatter.localizedString(for: date, relativeTo: Date())
+    private func formatAccountYear(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy"
+        return formatter.string(from: date)
     }
 }
 
