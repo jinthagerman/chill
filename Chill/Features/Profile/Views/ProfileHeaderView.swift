@@ -13,24 +13,19 @@ struct ProfileHeaderView: View {
                 .foregroundColor(.primary)
                 .accessibilityLabel("Display name: \(profile.displayName)")
             
-            // Email address
-            Text(profile.email)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .accessibilityLabel("Email: \(profile.email)")
-            
-            // Verification status badge
-            HStack(spacing: 8) {
-                Image(systemName: profile.isVerified ? "checkmark.seal.fill" : "exclamationmark.triangle.fill")
-                    .foregroundColor(profile.isVerified ? .green : .orange)
-                    .font(.caption)
+            // Email address with verification badge
+            HStack(spacing: 6) {
+                Text(profile.email)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
                 
-                Text(profile.isVerified ? "Verified" : "Unverified")
-                    .font(.caption)
-                    .foregroundColor(profile.isVerified ? .green : .orange)
+                if profile.isVerified {
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundColor(.blue)
+                        .font(.caption)
+                }
             }
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel(profile.isVerified ? "Account verified" : "Account not verified")
+            .accessibilityLabel(profile.isVerified ? "Email: \(profile.email), verified" : "Email: \(profile.email)")
             
             Divider()
                 .padding(.vertical, 4)
