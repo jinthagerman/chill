@@ -76,6 +76,8 @@ struct AuthLoginView: View {
             
             SecureField("Password", text: $viewModel.password)
                 .textContentType(.password)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled(true)
                 .focused($focusedField, equals: .password)
                 .submitLabel(.done)
                 .onSubmit { 
