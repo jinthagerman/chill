@@ -37,7 +37,8 @@ struct AuthLoginView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
-                        viewModel.navigateToChoice()
+                        viewModel.navigateBack()
+                        // Note: Coordinator should handle actual navigation back to Welcome
                     } label: {
                         Image(systemName: "chevron.left")
                         Text("Back")

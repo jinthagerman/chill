@@ -38,9 +38,15 @@ final class AuthCoordinator: ObservableObject {
             let service = AuthService.live(configuration: configuration)
             authService = service
 
-            let viewModel = AuthViewModel(service: service) { [weak self] in
-                self?.route = .videoList
-            }
+            let viewModel = AuthViewModel(
+                service: service,
+                onAuthenticated: { [weak self] in
+                    self?.route = .videoList
+                },
+                onBackToWelcome: { [weak self] in
+                    self?.route = .welcome
+                }
+            )
             authViewModel = viewModel
             reachabilityObserver = ReachabilityObserver { [weak viewModel] status in
                 viewModel?.updateNetworkStatus(status)

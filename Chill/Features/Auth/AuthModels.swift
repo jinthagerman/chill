@@ -41,10 +41,9 @@ enum AuthMode: Equatable, Hashable {
 }
 
 /// Navigation state for the authentication flow
-/// Represents the current screen in the three-screen auth flow (choice, login, signup)
-/// Added in: 005-split-login-and
+/// Represents the current screen in the auth flow (login, signup, reset)
+/// Updated: Removed choice case, WelcomeView handles that now
 enum AuthNavigationState: Equatable, Hashable {
-    case choice
     case login
     case signup(consentAccepted: Bool)
     case resetRequest
