@@ -225,6 +225,18 @@ final class AuthViewModel: ObservableObject {
         self.mode = mode
         statusBanner = nil
         errorMessage = nil
+        
+        // Update navigationState to match mode
+        switch mode {
+        case .login:
+            navigationState = .login
+        case let .signup(consentAccepted):
+            navigationState = .signup(consentAccepted: consentAccepted)
+        case .resetRequest:
+            navigationState = .resetRequest
+        case let .resetVerify(email):
+            navigationState = .resetVerify(pendingEmail: email)
+        }
     }
     
     // MARK: - Navigation Methods (Added in 005-split-login-and)
