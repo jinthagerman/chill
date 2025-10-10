@@ -13,9 +13,8 @@ struct ProfileView: View {
     @State private var showingChangePassword = false
     
     var body: some View {
-        NavigationView {
-            Group {
-                switch viewModel.loadingState {
+        Group {
+            switch viewModel.loadingState {
                 case .idle, .loading:
                     loadingView
                     
@@ -54,7 +53,6 @@ struct ProfileView: View {
                         authService: authService
                     )
                 )
-            }
         }
     }
     

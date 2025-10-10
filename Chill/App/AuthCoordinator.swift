@@ -7,7 +7,7 @@ import Supabase  // Added in: 006-add-a-profile
 
 @MainActor
 final class AuthCoordinator: ObservableObject {
-    enum Route {
+    enum Route: Hashable {
         case welcome
         case auth
         case savedLinks
@@ -22,6 +22,7 @@ final class AuthCoordinator: ObservableObject {
     }
 
     @Published private(set) var route: Route = .welcome
+    @Published var navigationPath = NavigationPath()
     @Published private(set) var state: BootstrapState = .loading
 
     private(set) var authViewModel: AuthViewModel?
@@ -41,10 +42,13 @@ final class AuthCoordinator: ObservableObject {
             let viewModel = AuthViewModel(
                 service: service,
                 onAuthenticated: { [weak self] in
+                    self?.navigationPath = NavigationPath() // Clear stack
                     self?.route = .videoList
                 },
                 onBackToWelcome: { [weak self] in
-                    self?.route = .welcome
+                    if let self = self, !self.navigationPath.isEmpty {
+                        self.navigationPath.removeLast()
+                    }
                 }
             )
             authViewModel = viewModel
@@ -147,26 +151,29 @@ final class AuthCoordinator: ObservableObject {
     /// Navigate to profile page
     /// Added in: 006-add-a-profile
     func presentProfile() {
-        route = .profile
+        navigationPath.append(Route.profile)
     }
     
     /// Dismiss profile and return to video list
     /// Added in: 006-add-a-profile
     func dismissProfile() {
-        route = .videoList
+        if !navigationPath.isEmpty {
+            navigationPath.removeLast()
+        }
     }
 
     func presentAuth(mode: AuthMode) {
         guard let viewModel = authViewModel else { return }
         resetInputs(for: mode, viewModel: viewModel)
         viewModel.updateMode(mode)
-        route = .auth
+        navigationPath.append(Route.auth)
     }
 
     func signOut() async {
         guard let service = authService else { return }
         do {
             try await service.signOut()
+            navigationPath = NavigationPath() // Clear navigation stack
             route = .welcome
         } catch {
             // Optionally surface sign-out errors in future polish tasks.
