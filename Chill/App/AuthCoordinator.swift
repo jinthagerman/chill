@@ -3,14 +3,16 @@ import Network
 import Combine
 import SwiftUI
 import SwiftData
+import Supabase  // Added in: 006-add-a-profile
 
 @MainActor
 final class AuthCoordinator: ObservableObject {
-    enum Route {
+    enum Route: Hashable {
         case welcome
         case auth
         case savedLinks
         case videoList
+        case profile  // Added in: 006-add-a-profile
     }
 
     enum BootstrapState {
@@ -20,6 +22,7 @@ final class AuthCoordinator: ObservableObject {
     }
 
     @Published private(set) var route: Route = .welcome
+    @Published var navigationPath = NavigationPath()
     @Published private(set) var state: BootstrapState = .loading
 
     private(set) var authViewModel: AuthViewModel?
@@ -36,9 +39,18 @@ final class AuthCoordinator: ObservableObject {
             let service = AuthService.live(configuration: configuration)
             authService = service
 
-            let viewModel = AuthViewModel(service: service) { [weak self] in
-                self?.route = .videoList
-            }
+            let viewModel = AuthViewModel(
+                service: service,
+                onAuthenticated: { [weak self] in
+                    self?.navigationPath = NavigationPath() // Clear stack
+                    self?.route = .videoList
+                },
+                onBackToWelcome: { [weak self] in
+                    if let self = self, !self.navigationPath.isEmpty {
+                        self.navigationPath.removeLast()
+                    }
+                }
+            )
             authViewModel = viewModel
             reachabilityObserver = ReachabilityObserver { [weak viewModel] status in
                 viewModel?.updateNetworkStatus(status)
@@ -87,9 +99,66 @@ final class AuthCoordinator: ObservableObject {
                 service: service,
                 modelContext: modelContext
             )
-            return VideoListView(viewModel: viewModel, authService: authService)
+            return VideoListView(
+                viewModel: viewModel,
+                authService: authService,
+                onProfileTap: { [weak self] in
+                    self?.presentProfile()
+                }
+            )
         } catch {
             fatalError("Failed to initialize VideoListView: \(error)")
+        }
+    }
+    
+    /// Create and present the profile view
+    /// Added in: 006-add-a-profile
+    func makeProfileView() -> ProfileView {
+        guard let authService = authService else {
+            fatalError("AuthService not initialized")
+        }
+        
+        do {
+            let configuration = try AuthConfiguration.load()
+            // Create new Supabase client for profile services
+            let supabaseClient = SupabaseClient(
+                supabaseURL: configuration.supabaseURL,
+                supabaseKey: configuration.supabaseAnonKey
+            )
+            let profileService = ProfileService(client: supabaseClient)
+            let settingsService = SettingsService(client: supabaseClient)
+            let profileViewModel = ProfileViewModel(
+                profileService: profileService,
+                authService: authService
+            )
+            
+            return ProfileView(
+                viewModel: profileViewModel,
+                settingsService: settingsService,
+                authService: authService,
+                onDismiss: { [weak self] in
+                    self?.dismissProfile()
+                },
+                onSignOut: { [weak self] in
+                    await self?.signOut()
+                }
+            )
+        } catch {
+            fatalError("Failed to initialize ProfileView: \(error)")
+        }
+    }
+    
+    /// Navigate to profile page
+    /// Added in: 006-add-a-profile
+    func presentProfile() {
+        navigationPath.append(Route.profile)
+    }
+    
+    /// Dismiss profile and return to video list
+    /// Added in: 006-add-a-profile
+    func dismissProfile() {
+        if !navigationPath.isEmpty {
+            navigationPath.removeLast()
         }
     }
 
@@ -97,13 +166,14 @@ final class AuthCoordinator: ObservableObject {
         guard let viewModel = authViewModel else { return }
         resetInputs(for: mode, viewModel: viewModel)
         viewModel.updateMode(mode)
-        route = .auth
+        navigationPath.append(Route.auth)
     }
 
     func signOut() async {
         guard let service = authService else { return }
         do {
             try await service.signOut()
+            navigationPath = NavigationPath() // Clear navigation stack
             route = .welcome
         } catch {
             // Optionally surface sign-out errors in future polish tasks.

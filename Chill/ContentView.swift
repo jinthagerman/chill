@@ -27,25 +27,44 @@ struct ContentView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(.systemGroupedBackground))
         case .ready:
-            contentForRoute
+            NavigationStack(path: $coordinator.navigationPath) {
+                rootView
+                    .navigationDestination(for: AuthCoordinator.Route.self) { route in
+                        destinationView(for: route)
+                    }
+            }
         }
     }
-
+    
     @ViewBuilder
-    private var contentForRoute: some View {
+    private var rootView: some View {
+        // Root is always welcome or videoList depending on auth state
         switch coordinator.route {
         case .welcome:
             WelcomeView(viewModel: coordinator.makeWelcomeViewModel())
+        case .videoList:
+            coordinator.makeVideoListView(modelContext: modelContext)
+        default:
+            // Fallback shouldn't happen
+            WelcomeView(viewModel: coordinator.makeWelcomeViewModel())
+        }
+    }
+    
+    @ViewBuilder
+    private func destinationView(for route: AuthCoordinator.Route) -> some View {
+        switch route {
         case .auth:
             if let viewModel = coordinator.authViewModel {
                 AuthFlowCoordinator(viewModel: viewModel)
             } else {
                 EmptyView()
             }
+        case .profile:
+            coordinator.makeProfileView()
         case .savedLinks:
             SavedLinksView()
-        case .videoList:
-            coordinator.makeVideoListView(modelContext: modelContext)
+        case .welcome, .videoList:
+            EmptyView() // These are handled as root
         }
     }
 }

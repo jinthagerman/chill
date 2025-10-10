@@ -5,12 +5,18 @@ import SwiftData
 struct VideoListView: View {
     @StateObject var viewModel: VideoListViewModel
     let authService: AuthService
+    let onProfileTap: (() -> Void)?  // Added in: 006-add-a-profile
     @State private var showAddVideoFlow = false
     
+    init(viewModel: VideoListViewModel, authService: AuthService, onProfileTap: (() -> Void)? = nil) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.authService = authService
+        self.onProfileTap = onProfileTap
+    }
+    
     var body: some View {
-        NavigationStack {
-            ZStack {
-                contentView
+        ZStack {
+            contentView
                 
                 // Floating action button (now active - Task T053)
                 VStack {
@@ -33,19 +39,31 @@ struct VideoListView: View {
                         .padding(Spacing.stackMedium)
                     }
                 }
-            }
-            .sheet(isPresented: $showAddVideoFlow) {
-                AddVideoCoordinator(authService: authService)
-            }
-            .navigationTitle(NSLocalizedString("video_list_title", comment: ""))
-            .overlay(alignment: .top) {
-                if viewModel.showReconnectToast {
-                    reconnectToast
+        }
+        .sheet(isPresented: $showAddVideoFlow) {
+            AddVideoCoordinator(authService: authService)
+        }
+        .navigationTitle(NSLocalizedString("video_list_title", comment: ""))
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    onProfileTap?()
+                }) {
+                    Image(systemName: "person.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.accentColor)
                 }
+                .accessibilityLabel("Profile")
+                .accessibilityIdentifier("profile_avatar")
             }
-            .task {
-                await viewModel.loadCards()
+        }
+        .overlay(alignment: .top) {
+            if viewModel.showReconnectToast {
+                reconnectToast
             }
+        }
+        .task {
+            await viewModel.loadCards()
         }
     }
     

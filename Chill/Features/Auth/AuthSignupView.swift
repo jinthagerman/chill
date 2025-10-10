@@ -37,7 +37,8 @@ struct AuthSignupView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
-                        viewModel.navigateToChoice()
+                        viewModel.navigateBack()
+                        // Note: Coordinator should handle actual navigation back to Welcome
                     } label: {
                         Image(systemName: "chevron.left")
                         Text("Back")
@@ -75,6 +76,8 @@ struct AuthSignupView: View {
             
             SecureField("Password", text: $viewModel.password)
                 .textContentType(.newPassword)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled(true)
                 .focused($focusedField, equals: .password)
                 .submitLabel(.next)
                 .onSubmit { focusedField = .confirmPassword }
@@ -85,6 +88,8 @@ struct AuthSignupView: View {
             
             SecureField("Confirm password", text: $viewModel.confirmPassword)
                 .textContentType(.newPassword)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled(true)
                 .focused($focusedField, equals: .confirmPassword)
                 .submitLabel(.done)
                 .onSubmit { 

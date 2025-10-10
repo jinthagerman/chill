@@ -16,6 +16,7 @@ final class AuthViewModel: ObservableObject {
 
     private let service: AuthServiceType
     private let onAuthenticated: () -> Void
+    private let onBackToWelcome: (() -> Void)?
     private var networkStatus: NetworkReachability
     private let analytics: AuthAnalytics
     private var cancellables = Set<AnyCancellable>()
@@ -26,15 +27,16 @@ final class AuthViewModel: ObservableObject {
         initialMode: AuthMode = .login,
         networkStatus: NetworkReachability = .wifi,
         analytics: AuthAnalytics = AuthAnalytics.noop,
-        onAuthenticated: @escaping () -> Void = {}
+        onAuthenticated: @escaping () -> Void = {},
+        onBackToWelcome: (() -> Void)? = nil
     ) {
         self.service = service
         self.mode = initialMode
-        // Initialize navigationState to match mode for backward compatibility
-        // TODO: Eventually remove mode and use navigationState exclusively
+        // Initialize navigationState to match mode
+        // WelcomeView now handles the choice between login and signup
         switch initialMode {
         case .login:
-            self.navigationState = .choice  // Start at choice screen by default
+            self.navigationState = .login
         case let .signup(consentAccepted):
             self.navigationState = .signup(consentAccepted: consentAccepted)
         case .resetRequest:
@@ -52,6 +54,7 @@ final class AuthViewModel: ObservableObject {
         self.networkStatus = networkStatus
         self.analytics = analytics
         self.onAuthenticated = onAuthenticated
+        self.onBackToWelcome = onBackToWelcome
         self.session = nil
 
         service.sessionPublisher
@@ -222,19 +225,32 @@ final class AuthViewModel: ObservableObject {
         self.mode = mode
         statusBanner = nil
         errorMessage = nil
+        
+        // Update navigationState to match mode
+        switch mode {
+        case .login:
+            navigationState = .login
+        case let .signup(consentAccepted):
+            navigationState = .signup(consentAccepted: consentAccepted)
+        case .resetRequest:
+            navigationState = .resetRequest
+        case let .resetVerify(email):
+            navigationState = .resetVerify(pendingEmail: email)
+        }
     }
     
     // MARK: - Navigation Methods (Added in 005-split-login-and)
     
-    /// Navigate to the choice screen (entry point)
-    func navigateToChoice() {
+    /// Navigate back to welcome screen (clears form state)
+    /// This is used when user taps back button in login/signup views
+    func navigateBack() {
         email = ""
         password = ""
         confirmPassword = ""
         otpCode = ""
         errorMessage = nil
         statusBanner = nil
-        navigationState = .choice
+        onBackToWelcome?()
     }
     
     /// Navigate to the login screen

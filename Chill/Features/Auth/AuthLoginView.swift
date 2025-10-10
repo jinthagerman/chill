@@ -37,7 +37,8 @@ struct AuthLoginView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {
-                        viewModel.navigateToChoice()
+                        viewModel.navigateBack()
+                        // Note: Coordinator should handle actual navigation back to Welcome
                     } label: {
                         Image(systemName: "chevron.left")
                         Text("Back")
@@ -75,6 +76,8 @@ struct AuthLoginView: View {
             
             SecureField("Password", text: $viewModel.password)
                 .textContentType(.password)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled(true)
                 .focused($focusedField, equals: .password)
                 .submitLabel(.done)
                 .onSubmit { 
